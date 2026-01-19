@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {"type": "string"},
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "aliases": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "description": {"type": "string"},
+          "exits": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "characters": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "items": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "isLocked": {"type": "boolean"}
+        },
+        "additionalProperties": false,
+        "required": ["name", "aliases", "description", "exits", "characters", "items", "isLocked"]
+      }
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "startNode": {"type": "null"}
+        },
+        "additionalProperties": false,
+        "required": ["name", "startNode"]
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "canPickup": {"type": "boolean"}
+        },
+        "additionalProperties": false,
+        "required": ["name", "description", "canPickup"]
+      }
+    },
+    "startingRoom": {"type": "string"}
+  },
+  "additionalProperties": false,
+  "required": ["rooms", "characters", "items", "startingRoom"]
+}

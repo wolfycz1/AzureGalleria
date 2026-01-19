@@ -1,0 +1,119 @@
+{
+  "$schema": "schema.json",
+  "rooms": [
+    {
+      "name": "Central Atrium",
+      "aliases": ["CA"],
+      "description": "",
+      "exits": ["Cinema Lobby", "Electronics Store", "Fashion Boutique", "Maintenance Hallway"],
+      "characters": ["The Angler", "MEI"],
+      "items": [],
+      "isLocked": false
+    },
+    {
+      "name": "Cinema Lobby",
+      "aliases": ["CL"],
+      "description": "",
+      "exits": ["Central Atrium", "Food Court"],
+      "characters": [],
+      "items": [],
+      "isLocked": false
+    },
+    {
+      "name": "Food Court",
+      "aliases": ["FC"],
+      "description": "",
+      "exits": ["Cinema Lobby"],
+      "characters": [],
+      "items": ["Old Pizza Slice"],
+      "isLocked": false
+    },
+    {
+      "name": "Maintenance Hallway",
+      "aliases": ["MH"],
+      "description": "",
+      "exits": ["Central Atrium", "Generator Room", "Cargo Bay"],
+      "characters": [],
+      "items": [],
+      "isLocked": true
+    },
+    {
+      "name": "Electronics Store",
+      "aliases": ["ES"],
+      "description": "",
+      "exits": ["Central Atrium", "Arcade"],
+      "characters": [],
+      "items": ["Fusion Battery"],
+      "isLocked": false
+    },
+    {
+      "name": "Arcade",
+      "aliases": ["A"],
+      "description": "",
+      "exits": ["Electronics Store"],
+      "characters": [],
+      "items": ["Game Token"],
+      "isLocked": false
+    },
+    {
+      "name": "Fashion Boutique",
+      "aliases": ["FB"],
+      "description": "",
+      "exits": ["Central Atrium"],
+      "characters": [],
+      "items": [],
+      "isLocked": false
+    },
+    {
+      "name": "Generator Room",
+      "aliases": ["GR"],
+      "description": "",
+      "exits": ["Maintenance Hallway"],
+      "characters": [],
+      "items": [],
+      "isLocked": false
+    },
+    {
+      "name": "Cargo Bay",
+      "aliases": ["CB"],
+      "description": "",
+      "exits": ["Maintenance Hallway"],
+      "characters": [],
+      "items": [],
+      "isLocked": false
+    }
+  ],
+  "characters": [
+    {
+      "name": "The Angler",
+      "startNode": null
+    },
+    {
+      "name": "MEI",
+      "startNode": null
+    }
+  ],
+  "items": [
+    {
+      "name": "Old Pizza Slice",
+      "description": "",
+      "canPickup": true
+    },
+    {
+      "name": "Rusty Key",
+      "description": "",
+      "canPickup": true
+    },
+    {
+      "name": "Fusion Battery",
+      "description": "",
+      "canPickup": true
+    },
+    {
+      "name": "Game Token",
+      "description": "",
+      "canPickup": true
+    }
+  ],
+  "startingRoom": "Central Atrium"
+}
