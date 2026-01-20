@@ -2,10 +2,7 @@ package com.wolfycz1;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 public class Room {
@@ -54,7 +51,7 @@ public class Room {
     }
 
     public Character getCharacter(String characterName) {
-        return null;
+        return characters.stream().filter(c -> Objects.equals(c.getName(), characterName)).findFirst().orElse(null);
     }
 
     public void unlock() {}

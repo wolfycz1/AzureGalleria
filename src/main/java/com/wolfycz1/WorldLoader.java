@@ -16,6 +16,7 @@ public class WorldLoader {
     private final Map<String, Room> rooms = new HashMap<>();
     private final Map<String, Character> characters = new HashMap<>();
     private final Map<String, Item> items = new HashMap<>();
+    private final Map<String, DialogueNode> dialogueNodes = new HashMap<>();
 
     public Room load(String filePath) {
         rooms.clear(); characters.clear(); items.clear();
@@ -41,13 +42,18 @@ public class WorldLoader {
 
     private void createDTOs(WorldMap worldMap) {
         for (CharacterDTO dto : worldMap.getCharacters()) {
-            Character character = new Character(dto.getName(), null); // TODO: null should be replaced with DialogueNode
+            Character character = new Character(dto.getName());
             characters.put(dto.getName(), character);
         }
 
         for (ItemDTO dto : worldMap.getItems()) {
             Item item = new Item(dto.getName(), dto.getDescription(), dto.isPickupable());
             items.put(dto.getName(), item);
+        }
+
+        for (DialogueNodeDTO dto : worldMap.getDialogues()) {
+            DialogueNode dialogueNode = new DialogueNode(dto.getId(), dto.getText());
+            dialogueNodes.put(dto.getId(), dialogueNode);
         }
 
         for (RoomDTO dto : worldMap.getRooms()) {
@@ -59,6 +65,7 @@ public class WorldLoader {
             );
             rooms.put(dto.getName(), room);
         }
+        log.info("DTOs created.");
     }
 
     private void assignDTOs(WorldMap worldMap) {
@@ -91,6 +98,28 @@ public class WorldLoader {
                 }
             }
         }
+
+        for (DialogueNodeDTO nodeDTO : worldMap.getDialogues()) {
+            DialogueNode sourceNode = dialogueNodes.get(nodeDTO.getId());
+
+            if (nodeDTO.getOptions() != null) {
+                for (DialogueOptionDTO optionDTO : nodeDTO.getOptions()) {
+                    DialogueNode targetNode = dialogueNodes.get(optionDTO.getNextNode());
+
+                    sourceNode.addOption(new DialogueOption(optionDTO.getLabel(), targetNode));
+                }
+            }
+        }
+
+        for (CharacterDTO characterDTO : worldMap.getCharacters()) {
+            Character character = characters.get(characterDTO.getName());
+
+            if (characterDTO.getStartNode() != null) {
+                DialogueNode startNode = dialogueNodes.get(characterDTO.getStartNode());
+                character.setStartNode(startNode);
+            }
+        }
+        log.info("DTOs assigned.");
     }
 
     @Data
@@ -98,6 +127,7 @@ public class WorldLoader {
         private List<RoomDTO> rooms;
         private List<CharacterDTO> characters;
         private List<ItemDTO> items;
+        private List<DialogueNodeDTO> dialogues;
         private String startingRoom;
     }
 
@@ -115,7 +145,7 @@ public class WorldLoader {
     @Data
     private static class CharacterDTO {
         private String name;
-        private String startNode; // TODO: Should be replaced with DialogueNode
+        private String startNode;
     }
 
     @Data
@@ -123,5 +153,18 @@ public class WorldLoader {
         private String name;
         private String description;
         private boolean isPickupable;
+    }
+
+    @Data
+    private static class DialogueNodeDTO {
+        private String id;
+        private String text;
+        private List<DialogueOptionDTO> options;
+    }
+
+    @Data
+    private static class DialogueOptionDTO {
+        private String label;
+        private String nextNode;
     }
 }

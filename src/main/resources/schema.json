@@ -38,7 +38,7 @@
         "type": "object",
         "properties": {
           "name": {"type": "string"},
-          "startNode": {"type": "null"}
+          "startNode": {"type": "string"}
         },
         "additionalProperties": false,
         "required": ["name", "startNode"]
@@ -57,8 +57,32 @@
         "required": ["name", "description", "canPickup"]
       }
     },
-    "startingRoom": {"type": "string"}
+    "startingRoom": {"type": "string"},
+    "dialogues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "text": {"type": "string"},
+          "options": {
+            "type": ["array", "null"],
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {"type": "string"},
+                "nextNode": {"type": ["string", "null"]}
+              },
+              "additionalProperties": false,
+              "required": ["label", "nextNode"]
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": ["id", "text", "options"]
+      }
+    }
   },
   "additionalProperties": false,
-  "required": ["rooms", "characters", "items", "startingRoom"]
+  "required": ["rooms", "characters", "items", "startingRoom", "dialogues"]
 }

@@ -90,7 +90,7 @@
     },
     {
       "name": "MEI",
-      "startNode": null
+      "startNode": "test_dialogue"
     }
   ],
   "items": [
@@ -115,5 +115,26 @@
       "canPickup": true
     }
   ],
-  "startingRoom": "Central Atrium"
+  "startingRoom": "Central Atrium",
+  "dialogues": [
+    {
+      "id": "test_dialogue",
+      "text": "This is a test dialogue.",
+      "options": [
+        {
+          "label": "This is a dialogue option",
+          "nextNode": null
+        },
+        {
+          "label": "This is a second option",
+          "nextNode": "test_dialogue_2"
+        }
+      ]
+    },
+    {
+      "id": "test_dialogue_2",
+      "text": "This is the final dialogue",
+      "options": null
+    }
+  ]
 }
