@@ -26,10 +26,10 @@
             "type": "array",
             "items": {"type": "string"}
           },
-          "isLocked": {"type": "boolean"}
+          "locked": {"type": "boolean"}
         },
         "additionalProperties": false,
-        "required": ["name", "aliases", "description", "exits", "characters", "items", "isLocked"]
+        "required": ["name", "aliases", "description", "exits", "characters", "items", "locked"]
       }
     },
     "characters": {
@@ -51,10 +51,10 @@
         "properties": {
           "name": {"type": "string"},
           "description": {"type": "string"},
-          "canPickup": {"type": "boolean"}
+          "pickupable": {"type": "boolean"}
         },
         "additionalProperties": false,
-        "required": ["name", "description", "canPickup"]
+        "required": ["name", "description", "pickupable"]
       }
     },
     "startingRoom": {"type": "string"},

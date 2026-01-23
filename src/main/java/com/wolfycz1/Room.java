@@ -12,19 +12,25 @@ public class Room {
     private Map<String, Room> exits;
     private List<Character> characters;
     private List<Item> items;
-    private boolean isLocked;
+    private boolean locked;
 
-    public Room(String name, List<String> aliases, String description, boolean isLocked) {
+    public Room(String name, List<String> aliases, String description, boolean locked) {
         this.name = name;
         this.aliases = aliases;
         this.description = description;
         this.exits = new HashMap<>();
         this.characters = new ArrayList<>();
         this.items = new ArrayList<>();
-        this.isLocked = isLocked;
+        this.locked = locked;
     }
 
     public Room getExit(String roomName) {
+        for (Room room : exits.values()) {
+            if (room.getName().equalsIgnoreCase(roomName)) return room;
+            for (String alias : room.getAliases()) {
+                if (alias.equalsIgnoreCase(roomName)) return room;
+            }
+        }
         return null;
     }
 
@@ -36,14 +42,16 @@ public class Room {
         items.add(item);
     }
 
-    public void removeItem(Item item) {}
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
 
     public Item getItem(String itemName) {
-        return null;
+        return items.stream().filter(i -> Objects.equals(i.getName().toLowerCase(), itemName.toLowerCase())).findFirst().orElse(null);
     }
 
     public boolean hasItem(String itemName) {
-        return false;
+        return items.stream().anyMatch(i -> Objects.equals(i.getName().toLowerCase(), itemName.toLowerCase()));
     }
 
     public void addCharacter(Character character) {
@@ -51,7 +59,19 @@ public class Room {
     }
 
     public Character getCharacter(String characterName) {
-        return characters.stream().filter(c -> Objects.equals(c.getName(), characterName)).findFirst().orElse(null);
+        return characters.stream().filter(c -> Objects.equals(c.getName().toLowerCase(), characterName.toLowerCase())).findFirst().orElse(null);
+    }
+
+    public String listExits() {
+        return exits.keySet().toString();
+    }
+
+    public String listItems() {
+        return items.stream().map(Item::getName).toList().toString();
+    }
+
+    public String listCharacters() {
+        return characters.stream().map(Character::getName).toList().toString();
     }
 
     public void unlock() {}

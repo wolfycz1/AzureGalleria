@@ -8,7 +8,7 @@
       "exits": ["Cinema Lobby", "Electronics Store", "Fashion Boutique", "Maintenance Hallway"],
       "characters": ["The Angler", "MEI"],
       "items": [],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Cinema Lobby",
@@ -17,7 +17,7 @@
       "exits": ["Central Atrium", "Food Court"],
       "characters": [],
       "items": [],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Food Court",
@@ -26,7 +26,7 @@
       "exits": ["Cinema Lobby"],
       "characters": [],
       "items": ["Old Pizza Slice"],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Maintenance Hallway",
@@ -35,7 +35,7 @@
       "exits": ["Central Atrium", "Generator Room", "Cargo Bay"],
       "characters": [],
       "items": [],
-      "isLocked": true
+      "locked": true
     },
     {
       "name": "Electronics Store",
@@ -44,7 +44,7 @@
       "exits": ["Central Atrium", "Arcade"],
       "characters": [],
       "items": ["Fusion Battery"],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Arcade",
@@ -53,7 +53,7 @@
       "exits": ["Electronics Store"],
       "characters": [],
       "items": ["Game Token"],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Fashion Boutique",
@@ -62,7 +62,7 @@
       "exits": ["Central Atrium"],
       "characters": [],
       "items": [],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Generator Room",
@@ -71,7 +71,7 @@
       "exits": ["Maintenance Hallway"],
       "characters": [],
       "items": [],
-      "isLocked": false
+      "locked": false
     },
     {
       "name": "Cargo Bay",
@@ -80,7 +80,7 @@
       "exits": ["Maintenance Hallway"],
       "characters": [],
       "items": [],
-      "isLocked": false
+      "locked": false
     }
   ],
   "characters": [
@@ -97,22 +97,22 @@
     {
       "name": "Old Pizza Slice",
       "description": "",
-      "canPickup": true
+      "pickupable": true
     },
     {
       "name": "Rusty Key",
       "description": "",
-      "canPickup": true
+      "pickupable": true
     },
     {
       "name": "Fusion Battery",
       "description": "",
-      "canPickup": true
+      "pickupable": true
     },
     {
       "name": "Game Token",
       "description": "",
-      "canPickup": true
+      "pickupable": true
     }
   ],
   "startingRoom": "Central Atrium",

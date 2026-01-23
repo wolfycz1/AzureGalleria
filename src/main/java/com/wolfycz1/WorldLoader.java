@@ -20,10 +20,9 @@ public class WorldLoader {
 
     public Room load(String filePath) {
         rooms.clear(); characters.clear(); items.clear();
-        try {
+        try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath)){
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);                            // IGNORES $SCHEMA
-            InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath);
             if (inputStream == null) {
                 log.error("Critical error: World file is missing! {}", filePath);
                 return null;
@@ -139,7 +138,7 @@ public class WorldLoader {
         private List<String> exits;
         private List<String> characters;
         private List<String> items;
-        private boolean isLocked;
+        private boolean locked;
     }
 
     @Data
@@ -152,7 +151,7 @@ public class WorldLoader {
     private static class ItemDTO {
         private String name;
         private String description;
-        private boolean isPickupable;
+        private boolean pickupable;
     }
 
     @Data

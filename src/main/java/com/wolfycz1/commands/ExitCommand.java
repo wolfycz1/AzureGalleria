@@ -6,7 +6,7 @@ public class ExitCommand implements Command {
 
     @Override
     public String execute(String argument) {
-        return null;
+        return "Exiting...";
     }
 
     @Override

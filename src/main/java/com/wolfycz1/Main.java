@@ -1,5 +1,8 @@
 package com.wolfycz1;
 
 public class Main {
-    public static void main(String[] args) {}
+    public static void main(String[] args) {
+        Console console = new Console();
+        console.initialize();
+    }
 }
