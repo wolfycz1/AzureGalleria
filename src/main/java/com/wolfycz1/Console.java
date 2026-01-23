@@ -17,6 +17,7 @@ public class Console {
     private DialogueHandler dialogueHandler;
     private final Scanner sc;
     private boolean exit;
+    private boolean dialogueActive;
     private Room currentRoom;
     private final Inventory inventory;
 
@@ -25,6 +26,7 @@ public class Console {
         commandList = new ArrayList<>();
         sc = new Scanner(System.in);
         inventory = new Inventory();
+        dialogueHandler = new DialogueHandler();
     }
 
     public void initialize() {
@@ -52,7 +54,7 @@ public class Console {
         register("go", new GoCommand(this), "g");
         register("help", new HelpCommand(this), "?");
         register("hint", new HintCommand(), "h");
-        register("interact", new InteractCommand(), "i");
+        register("interact", new InteractCommand(this), "i");
         register("pickup", new PickupCommand(this), "p");
         register("drop", new DropCommand(this), "d");
         register("investigate", new InvestigateCommand(), "f");
@@ -90,13 +92,24 @@ public class Console {
             if (in.isEmpty()) return;
             in = in.trim().toLowerCase();
 
+            if (dialogueActive) {
+                String response = dialogueHandler.processInput(in);
+                if (response == null) {
+                    dialogueActive = false;
+                    System.out.println(">> (Conversation ended.)");
+                } else {
+                    System.out.printf(">> %s%n", response);
+                }
+                return;
+            }
+
             String[] parsedInput = parse(in);
             String command = parsedInput[0];
             String argument = parsedInput[1];
             log.info("Command: \"{}\" Argument: \"{}\"", command, argument);
 
             if (commands.containsKey(command)) {
-                System.out.println(">> " + commands.get(command).execute(argument));
+                System.out.printf(">> %s%n", commands.get(command).execute(argument));
                 exit = commands.get(command).exit();
             } else {
                 System.err.printf(">> Command '%s' not recognized. See 'help'.\n", command);

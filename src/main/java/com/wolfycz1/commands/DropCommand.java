@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class DropCommand implements Command {
-    private Console console;
+    private final Console console;
 
     @Override
     public String execute(String argument) {

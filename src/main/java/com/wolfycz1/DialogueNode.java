@@ -1,12 +1,15 @@
 package com.wolfycz1;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class DialogueNode {
-    private String id;
-    private String text;
-    private List<DialogueOption> options;
+    private final String id;
+    private final String text;
+    private final List<DialogueOption> options;
 
     public DialogueNode(String id, String text) {
         this.id = id;
