@@ -23,6 +23,21 @@ public class DropCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Drops an item from your inventory to the floor. [d]";
+    }
+
+    @Override
+    public String getDetails() {
+        return """
+               DROP item
+                    item - item to be dropped from the inventory to the current room.
+               
+               Example:
+                    DROP Rusty key""";
+    }
+
+    @Override
     public boolean exit() {
         return false;
     }

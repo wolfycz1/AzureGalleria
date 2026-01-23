@@ -23,6 +23,23 @@ public class GoCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Moves the player to a different room. [g]";
+    }
+
+    @Override
+    public String getDetails() {
+        return """
+               GO room | alias
+                    room - specific room you want to traverse to that is connected to the current room.
+                    alias - initialism of the specific room.
+               
+               Example:
+                    GO Central Atrium
+                    GO MH""";
+    }
+
+    @Override
     public boolean exit() {
         return false;
     }

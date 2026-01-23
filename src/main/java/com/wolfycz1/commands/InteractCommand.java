@@ -9,6 +9,21 @@ public class InteractCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Talks to a character. [i]";
+    }
+
+    @Override
+    public String getDetails() {
+        return """
+               INTERACT character
+                    character - character in the current room to initiate a conversation with.
+               
+               Example:
+                    interact The Angler""";
+    }
+
+    @Override
     public boolean exit() {
         return false;
     }

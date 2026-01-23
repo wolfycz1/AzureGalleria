@@ -9,6 +9,21 @@ public class UseCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Uses an item. [u]";
+    }
+
+    @Override
+    public String getDetails() {
+        return """
+               USE item
+                    item - item from your inventory to be used.
+               
+               Example:
+                    use Rusty Key""";
+    }
+
+    @Override
     public boolean exit() {
         return false;
     }

@@ -38,7 +38,7 @@
         "type": "object",
         "properties": {
           "name": {"type": "string"},
-          "startNode": {"type": "string"}
+          "startNode": {"type": ["string", "null"]}
         },
         "additionalProperties": false,
         "required": ["name", "startNode"]

@@ -24,6 +24,24 @@ public class PickupCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Picks up an item from the current room. [p]";
+    }
+
+    @Override
+    public String getDetails() {
+        return String.format("""
+               PICKUP item
+                    item - item to be picked up from the current room.
+               
+               Example:
+                    PICKUP Rusty Key
+               
+               Note:
+                    The inventory has a capacity of %d items.""", console.getInventory().getCapacity());
+    }
+
+    @Override
     public boolean exit() {
         return false;
     }

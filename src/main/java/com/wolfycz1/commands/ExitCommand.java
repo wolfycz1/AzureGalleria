@@ -10,6 +10,18 @@ public class ExitCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Exits the game. [e]";
+    }
+
+    @Override
+    public String getDetails() {
+        return """
+               EXIT     (ALIASES: %a)
+               Quits the game without saving.""";
+    }
+
+    @Override
     public boolean exit() {
         return true;
     }

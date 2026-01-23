@@ -9,6 +9,18 @@ public class HintCommand implements Command {
     }
 
     @Override
+    public String getDescription() {
+        return "Provides a context-sensitive hint. [h]";
+    }
+
+    @Override
+    public String getDetails() {
+        return """
+               HINT
+               Asks for confirmation before offering a hint for when the player is stuck.""";
+    }
+
+    @Override
     public boolean exit() {
         return false;
     }

@@ -50,7 +50,7 @@ public class Console {
         if (currentRoom == null) return;
 
         register("go", new GoCommand(this), "g");
-        register("help", new HelpCommand(commandList), "?");
+        register("help", new HelpCommand(this), "?");
         register("hint", new HintCommand(), "h");
         register("interact", new InteractCommand(), "i");
         register("pickup", new PickupCommand(this), "p");

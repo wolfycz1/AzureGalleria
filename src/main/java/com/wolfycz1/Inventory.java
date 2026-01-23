@@ -36,4 +36,8 @@ public class Inventory {
     private boolean isFull() {
         return items.size() >= CAPACITY;
     }
+
+    public int getCapacity() {
+        return CAPACITY;
+    }
 }
