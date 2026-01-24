@@ -1,6 +1,9 @@
 package com.wolfycz1.commands;
 
 import com.wolfycz1.Command;
+import com.wolfycz1.Language;
+
+import java.util.Arrays;
 
 public class UseCommand implements Command {
     @Override
@@ -10,17 +13,18 @@ public class UseCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "Uses an item. [u]";
+        return Language.get("cmd.use.desc") + " " + Arrays.toString(Language.getArray("cmd.use.aliases"));
     }
 
     @Override
     public String getDetails() {
-        return """
-               USE item
-                    item - item from your inventory to be used.
+        return String.format("""
+               %s
+                    %s
                
-               Example:
-                    use Rusty Key""";
+               %s
+                    %s""", Language.get("man.use.cmd"), Language.get("man.use.arg"), Language.get("man.example"),
+                Language.get("man.use.example"));
     }
 
     @Override

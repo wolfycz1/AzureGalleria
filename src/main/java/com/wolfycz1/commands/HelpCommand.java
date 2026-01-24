@@ -1,8 +1,11 @@
 package com.wolfycz1.commands;
 
 import com.wolfycz1.Command;
+import com.wolfycz1.Language;
 import lombok.AllArgsConstructor;
 import com.wolfycz1.Console;
+
+import java.util.Arrays;
 
 @AllArgsConstructor
 public class HelpCommand implements Command {
@@ -12,7 +15,7 @@ public class HelpCommand implements Command {
     public String execute(String argument) {
         if (argument.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            sb.append("For more information on a specific command, type HELP command-name.\n\n");
+            sb.append(Language.get("cmd.help.moreInfo")).append("\n\n");
 
             for (String name : console.getCommandList()) {
                 Command command = console.getCommands().get(name);
@@ -23,21 +26,21 @@ public class HelpCommand implements Command {
         }
 
         Command command = console.getCommands().get(argument);
-        if (command == null) return String.format("Unknown command '%s'. Type 'help' for a list of commands.", argument);
+        if (command == null) return Language.get("cmd.help.err.unknownCmd", argument);
 
         return command.getDescription() + "\n\n" + command.getDetails();
     }
 
     @Override
     public String getDescription() {
-        return "Displays a list of commands or a specific command's details. [?]";
+        return Language.get("cmd.help.desc") + " " + Arrays.toString(Language.getArray("cmd.help.aliases"));
     }
 
     @Override
     public String getDetails() {
-        return """
-               HELP [command]
-                    command - command name to display information on.""";
+        return String.format("""
+               %s
+                    %s""", Language.get("man.help.cmd"), Language.get("man.help.arg"));
     }
 
     @Override

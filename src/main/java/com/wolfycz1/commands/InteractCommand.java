@@ -3,7 +3,10 @@ package com.wolfycz1.commands;
 import com.wolfycz1.Character;
 import com.wolfycz1.Command;
 import com.wolfycz1.Console;
+import com.wolfycz1.Language;
 import lombok.AllArgsConstructor;
+
+import java.util.Arrays;
 
 @AllArgsConstructor
 public class InteractCommand implements Command {
@@ -11,12 +14,13 @@ public class InteractCommand implements Command {
 
     @Override
     public String execute(String argument) {
-        if (argument.isEmpty()) return "No argument specified. See 'help interact'.";
+        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.interact")));
 
         Character character = console.getCurrentRoom().getCharacter(argument);
-        if (character == null) return String.format("There is no one named '%s' in this room.", argument);
+        if (character == null) return Language.get("cmd.interact.err.noChar", argument);
 
-        if (character.getStartNode() == null) return String.format("%s doesn't seem to want to talk to you at the moment.", character.getName());
+        if (character.getStartNode() == null) return Language.get("cmd.interact.err.noDialogue", character.getName());
 
         console.setDialogueActive(true);
         return console.getDialogueHandler().startDialogue(character);
@@ -24,17 +28,18 @@ public class InteractCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "Talks to a character. [i]";
+        return Language.get("cmd.interact.desc") + " " + Arrays.toString(Language.getArray("cmd.interact.aliases"));
     }
 
     @Override
     public String getDetails() {
-        return """
-               INTERACT character
-                    character - character in the current room to initiate a conversation with.
+        return String.format("""
+               %s
+                    %s
                
-               Example:
-                    interact The Angler""";
+               %s
+                    %s""", Language.get("man.interact.cmd"), Language.get("man.interact.arg"),
+                Language.get("man.example"), Language.get("man.interact.example"));
     }
 
     @Override

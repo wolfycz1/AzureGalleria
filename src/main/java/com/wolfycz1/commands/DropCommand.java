@@ -3,38 +3,42 @@ package com.wolfycz1.commands;
 import com.wolfycz1.*;
 import lombok.AllArgsConstructor;
 
+import java.util.Arrays;
+
 @AllArgsConstructor
 public class DropCommand implements Command {
     private final Console console;
 
     @Override
     public String execute(String argument) {
-        if (argument.isEmpty()) return "No argument specified. See 'help drop'";
+        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.drop")));
 
         Inventory inventory = console.getInventory();
         Room currentRoom = console.getCurrentRoom();
         Item item = inventory.getItem(argument);
 
-        if (item == null) return String.format("You don't have the '%s' in your inventory.", argument);
+        if (item == null) return Language.get("cmd.drop.err.noItem", argument);
         inventory.removeItem(item);
         currentRoom.addItem(item);
 
-        return String.format("You dropped the %s onto the floor.", item.getName());
+        return Language.get("cmd.drop.execute", item.getName());
     }
 
     @Override
     public String getDescription() {
-        return "Drops an item from your inventory to the floor. [d]";
+        return Language.get("cmd.drop.desc") + " " + Arrays.toString(Language.getArray("cmd.drop.aliases"));
     }
 
     @Override
     public String getDetails() {
-        return """
-               DROP item
-                    item - item to be dropped from the inventory to the current room.
+        return String.format("""
+               %s
+                    %s
                
-               Example:
-                    DROP Rusty key""";
+               %s
+                    %s""", Language.get("man.drop.cmd"), Language.get("man.drop.arg"),
+                Language.get("man.example"), Language.get("man.drop.example"));
     }
 
     @Override

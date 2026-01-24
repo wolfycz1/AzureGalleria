@@ -3,42 +3,47 @@ package com.wolfycz1.commands;
 import com.wolfycz1.*;
 import lombok.AllArgsConstructor;
 
+import java.util.Arrays;
+
 @AllArgsConstructor
 public class PickupCommand implements Command {
     private final Console console;
 
     @Override
     public String execute(String argument) {
-        if (argument.isEmpty()) return "No argument specified. See 'help pickup'";
+        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.pickup")));
 
         Inventory inventory = console.getInventory();
         Room currentRoom = console.getCurrentRoom();
         Item item = currentRoom.getItem(argument);
 
-        if (item == null) return String.format("There is no '%s' here to pick up.", argument);
-        if (!item.isPickupable()) return String.format("You cannot pick up the %s as it's fixed in place.", item.getName());
-        if (!inventory.addItem(item)) return "Your backpack is full! You must drop something before picking this up.";
+        if (item == null) return Language.get("cmd.pickup.err.noItem", argument);
+        if (!item.isPickupable()) return Language.get("cmd.pickup.err.notPickupable", item.getName());
+        if (!inventory.addItem(item)) return Language.get("cmd.pickup.err.invFull");
 
         currentRoom.removeItem(item);
-        return String.format("You picked up the %s and put it in your inventory.", item.getName());
+        return Language.get("cmd.pickup.execute", item.getName());
     }
 
     @Override
     public String getDescription() {
-        return "Picks up an item from the current room. [p]";
+        return Language.get("cmd.pickup.desc") + " " + Arrays.toString(Language.getArray("cmd.pickup.aliases"));
     }
 
     @Override
     public String getDetails() {
         return String.format("""
-               PICKUP item
-                    item - item to be picked up from the current room.
+               %s
+                    %s
                
-               Example:
-                    PICKUP Rusty Key
+               %s
+                    %s
                
-               Note:
-                    The inventory has a capacity of %d items.""", console.getInventory().getCapacity());
+               %s
+                    %s""", Language.get("man.pickup.cmd"), Language.get("man.pickup.arg"), Language.get("man.example"),
+                Language.get("man.pickup.example"), Language.get("man.note"),
+                Language.get("man.pickup.note", console.getInventory().getCapacity()));
     }
 
     @Override

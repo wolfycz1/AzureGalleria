@@ -2,8 +2,11 @@ package com.wolfycz1.commands;
 
 import com.wolfycz1.Command;
 import com.wolfycz1.Console;
+import com.wolfycz1.Language;
 import com.wolfycz1.Room;
 import lombok.AllArgsConstructor;
+
+import java.util.Arrays;
 
 @AllArgsConstructor
 public class GoCommand implements Command {
@@ -11,32 +14,34 @@ public class GoCommand implements Command {
 
     @Override
     public String execute(String argument) {
-        if (argument.isEmpty()) return "No argument specified. See 'help go'.";
+        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.go")));
 
         Room room = console.getCurrentRoom().getExit(argument);
 
-        if (room == null) return String.format("There is no exit to the '%s' from here.", argument);
-        if (room.isLocked()) return String.format("The entrance to the %s is locked. You'll need to unlock it first.", room.getName());
+        if (room == null) return Language.get("cmd.go.err.noExit", argument);
+        if (room.isLocked()) return Language.get("cmd.go.err.locked", room.getName());
 
         console.setCurrentRoom(room);
-        return String.format("You moved to the %s.", room.getName());
+        return Language.get("cmd.go.execute", room.getName());
     }
 
     @Override
     public String getDescription() {
-        return "Moves the player to a different room. [g]";
+        return Language.get("cmd.go.desc") + " " + Arrays.toString(Language.getArray("cmd.go.aliases"));
     }
 
     @Override
     public String getDetails() {
-        return """
-               GO room | alias
-                    room - specific room you want to traverse to that is connected to the current room.
-                    alias - initialism of the specific room.
+        return String.format("""
+               %s
+                    %s
+                    %s
                
-               Example:
-                    GO Central Atrium
-                    GO MH""";
+               %s
+                    %s
+                    %s""", Language.get("man.go.cmd"), Language.get("man.go.arg.room"), Language.get("man.go.arg.alias"),
+                Language.get("man.example"), Language.get("man.go.example.room"), Language.get("man.go.example.alias"));
     }
 
     @Override

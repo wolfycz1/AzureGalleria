@@ -1,6 +1,9 @@
 package com.wolfycz1.commands;
 
 import com.wolfycz1.Command;
+import com.wolfycz1.Language;
+
+import java.util.Arrays;
 
 public class InvestigateCommand implements Command {
     @Override
@@ -10,14 +13,14 @@ public class InvestigateCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "Describes the current room again. [f]";
+        return Language.get("cmd.investigate.desc") + " " + Arrays.toString(Language.getArray("cmd.investigate.aliases"));
     }
 
     @Override
     public String getDetails() {
-        return """
-               INVESTIGATE
-               Prints the full description of the room, including visible items and characters.""";
+        return String.format("""
+               %s
+               %s""", Language.get("man.investigate.cmd"), Language.get("man.investigate.desc"));
     }
 
     @Override

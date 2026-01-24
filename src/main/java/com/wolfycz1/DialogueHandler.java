@@ -17,12 +17,12 @@ public class DialogueHandler {
         try {
             choiceIndex = Integer.parseInt(input) - 1;
         } catch (NumberFormatException e) {
-            return "Please enter a number.";
+            return Language.get("dialogueHandler.err.notNum");
         }
 
         List<DialogueOption> options = currentNode.getOptions();
         if (choiceIndex < 0 || choiceIndex > options.size()) {
-            return "Invalid option. Please try again.";
+            return Language.get("dialogueHandler.err.invOpt");
         }
 
         if (choiceIndex == options.size()) return null;
@@ -45,7 +45,7 @@ public class DialogueHandler {
         for (int i = 0; i < options.size(); i++) {
             sb.append(String.format("[%d] %s%n", (i + 1), options.get(i).getLabel()));
         }
-        sb.append(String.format("[%d] %s%n", (options.size() + 1), "Walk away."));
+        sb.append(String.format("[%d] %s%n", (options.size() + 1), Language.get("dialogueHandler.opt.walkAway")));
 
         return sb.toString();
     }

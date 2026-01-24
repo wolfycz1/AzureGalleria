@@ -43,23 +43,23 @@ public class Console {
                 --------------------------------------------------------------------------------
                 Please download Maven here: https://maven.apache.org/download.cgi
              */
-            log.error("This application won't work correctly inside an IDE. Please use the terminal.");
+            log.error(Language.get("console.err.IDE"));
             return;
         }
 
         WorldLoader worldLoader = new WorldLoader();
-        currentRoom = worldLoader.load("data.json");
+        currentRoom = worldLoader.load(Language.get("data.json"));
         if (currentRoom == null) return;
 
-        register("go", new GoCommand(this), "g");
-        register("help", new HelpCommand(this), "?");
-        register("hint", new HintCommand(), "h");
-        register("interact", new InteractCommand(this), "i");
-        register("pickup", new PickupCommand(this), "p");
-        register("drop", new DropCommand(this), "d");
-        register("investigate", new InvestigateCommand(), "f");
-        register("use", new UseCommand(), "u");
-        register("exit", new ExitCommand(), "e");
+        register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
+        register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
+        register(Language.get("cmd.hint"), new HintCommand(), Language.getArray("cmd.hint.aliases"));
+        register(Language.get("cmd.interact"), new InteractCommand(this), Language.getArray("cmd.interact.aliases"));
+        register(Language.get("cmd.pickup"), new PickupCommand(this), Language.getArray("cmd.pickup.aliases"));
+        register(Language.get("cmd.drop"), new DropCommand(this), Language.getArray("cmd.drop.aliases"));
+        register(Language.get("cmd.investigate"), new InvestigateCommand(), Language.getArray("cmd.investigate.aliases"));
+        register(Language.get("cmd.use"), new UseCommand(), Language.getArray("cmd.use.aliases"));
+        register(Language.get("cmd.exit"), new ExitCommand(), Language.getArray("cmd.exit.aliases"));
 
         while (!exit) {
             execute();
@@ -96,7 +96,7 @@ public class Console {
                 String response = dialogueHandler.processInput(in);
                 if (response == null) {
                     dialogueActive = false;
-                    System.out.println(">> (Conversation ended.)");
+                    System.out.println(Language.get("console.info.convEnd"));
                 } else {
                     System.out.printf(">> %s%n", response);
                 }
@@ -112,7 +112,7 @@ public class Console {
                 System.out.printf(">> %s%n", commands.get(command).execute(argument));
                 exit = commands.get(command).exit();
             } else {
-                System.err.printf(">> Command '%s' not recognized. See 'help'.\n", command);
+                System.err.println(Language.get("console.err.notRecognized", command, "cmd.help"));
             }
             System.out.println();
         } catch (NoSuchElementException e) {
