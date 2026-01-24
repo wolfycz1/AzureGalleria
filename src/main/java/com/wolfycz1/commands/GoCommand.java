@@ -15,7 +15,7 @@ public class GoCommand implements Command {
     @Override
     public String execute(String argument) {
         if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.go")));
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.go")));
 
         Room room = console.getCurrentRoom().getExit(argument);
 

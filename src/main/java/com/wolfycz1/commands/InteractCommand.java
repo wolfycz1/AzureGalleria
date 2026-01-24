@@ -15,7 +15,7 @@ public class InteractCommand implements Command {
     @Override
     public String execute(String argument) {
         if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.interact")));
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.interact")));
 
         Character character = console.getCurrentRoom().getCharacter(argument);
         if (character == null) return Language.get("cmd.interact.err.noChar", argument);

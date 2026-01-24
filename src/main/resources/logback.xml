@@ -1,7 +1,8 @@
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT" class="com.wolfycz1.JLineAppender">
         <encoder>
             <pattern>[%level] %msg%n</pattern>
+            <charset>UTF-8</charset>
         </encoder>
     </appender>
 

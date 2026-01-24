@@ -12,7 +12,7 @@ public class PickupCommand implements Command {
     @Override
     public String execute(String argument) {
         if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.pickup")));
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.pickup")));
 
         Inventory inventory = console.getInventory();
         Room currentRoom = console.getCurrentRoom();

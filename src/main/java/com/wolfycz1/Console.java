@@ -4,6 +4,11 @@ import com.wolfycz1.commands.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
 import java.util.*;
@@ -20,6 +25,8 @@ public class Console {
     private boolean dialogueActive;
     private Room currentRoom;
     private final Inventory inventory;
+    private Terminal terminal;
+    private LineReader reader;
 
     public Console() {
         commands = new HashMap<>();
@@ -30,26 +37,23 @@ public class Console {
     }
 
     public void initialize() {
-        if (System.console() == null) {
-            /*
-                This is here to prevent running Maven inside an IDE.
-                Running Maven inside an IDE flushes incorrectly,
-                which bufferes the print() method behind scanner.nextLine()
-                resulting in an output like this:
-                --------------------------------------------------------------------------------
-                Code:                                   Output:                 Expected output:
-                System.out.print(">> ");                input                   >> input
-                scanner.nextLine();                     >> >>
-                --------------------------------------------------------------------------------
-                Please download Maven here: https://maven.apache.org/download.cgi
-             */
-            log.error(Language.get("console.err.IDE"));
-            return;
+        try {
+            terminal = TerminalBuilder.builder().system(true).jansi(true).build();
+        } catch (IOException e) {
+            log.warn("IO Exception triggered while building terminal.");
         }
+
+        reader = LineReaderBuilder.builder().terminal(terminal).build();
+        JLineAppender.setLineReader(reader);
+
+        setLanguage();
 
         WorldLoader worldLoader = new WorldLoader();
         currentRoom = worldLoader.load(Language.get("data.json"));
-        if (currentRoom == null) return;
+        if (currentRoom == null) {
+            close();
+            return;
+        }
 
         register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
         register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
@@ -73,7 +77,7 @@ public class Console {
                     """, currentRoom.getName(), currentRoom.getAliases(), currentRoom.isLocked() ? "LOCKED" : "UNLOCKED",
                     currentRoom.listItems(), currentRoom.listCharacters(), currentRoom.listExits(), inventory.listItems());
         }
-        sc.close();
+        close();
     }
 
     private void register(String name, Command command, String... aliases) {
@@ -86,9 +90,8 @@ public class Console {
     }
 
     private void execute() {
-        System.out.print(">> ");
         try {
-            String in = sc.nextLine();
+            String in = reader.readLine(">> ");
             if (in.isEmpty()) return;
             in = in.trim().toLowerCase();
 
@@ -96,9 +99,9 @@ public class Console {
                 String response = dialogueHandler.processInput(in);
                 if (response == null) {
                     dialogueActive = false;
-                    System.out.println(Language.get("console.info.convEnd"));
+                    terminal.writer().println(Language.get("console.info.convEnd"));
                 } else {
-                    System.out.printf(">> %s%n", response);
+                    terminal.writer().printf(">> %s%n", response);
                 }
                 return;
             }
@@ -109,14 +112,16 @@ public class Console {
             log.info("Command: \"{}\" Argument: \"{}\"", command, argument);
 
             if (commands.containsKey(command)) {
-                System.out.printf(">> %s%n", commands.get(command).execute(argument));
+                terminal.writer().printf(">> %s%n", commands.get(command).execute(argument));
                 exit = commands.get(command).exit();
             } else {
-                System.err.println(Language.get("console.err.notRecognized", command, "cmd.help"));
+                terminal.writer().println(Language.get("console.err.notRecognized", command, Language.get("cmd.help")));
             }
-            System.out.println();
+            terminal.writer().println();
         } catch (NoSuchElementException e) {
             log.warn("No such element exception triggered at scanner.");
+        } catch (UserInterruptException e) {
+            log.warn("User interrupt Exception triggered at Terminal.writer()");
         }
     }
 
@@ -127,5 +132,33 @@ public class Console {
         String argument = (inputParts.length > 1) ? inputParts[1] : "";
 
         return new String[]{command, argument};
+    }
+
+    private void setLanguage() {
+        terminal.writer().println("[DEFAULT] English");
+        terminal.writer().println("[2] česky");
+        terminal.writer().println("[3] polski");
+        String input = reader.readLine(">> ").trim();
+
+        Locale locale = switch (input) {
+            case "2" -> Locale.forLanguageTag("cs-CZ");
+            case "3" -> Locale.forLanguageTag("pl-PL");
+            default -> Locale.ENGLISH;
+        };
+
+        Language.load(locale);
+
+        terminal.writer().println(Language.get("console.info.langSelect"));
+    }
+
+    private void close() {
+        try {
+            sc.close();
+            terminal.close();
+        } catch (IllegalStateException e) {
+            log.warn("Illegal State Exception triggered while closing Scanner.");
+        } catch (IOException e) {
+            log.warn("IO Exception while closing Terminal");
+        }
     }
 }

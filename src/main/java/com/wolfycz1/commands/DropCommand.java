@@ -12,7 +12,7 @@ public class DropCommand implements Command {
     @Override
     public String execute(String argument) {
         if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.drop")));
+                Language.get("cmd.seeCmd", Language.get("cmd.help"),Language.get("cmd.drop")));
 
         Inventory inventory = console.getInventory();
         Room currentRoom = console.getCurrentRoom();
