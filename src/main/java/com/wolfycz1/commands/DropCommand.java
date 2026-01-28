@@ -22,7 +22,8 @@ public class DropCommand implements Command {
         inventory.removeItem(item);
         currentRoom.addItem(item);
 
-        return Language.get("cmd.drop.execute", item.getName());
+        return Language.get("cmd.drop.execute", item.getName()) + "\n"
+                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL");
     }
 
     @Override

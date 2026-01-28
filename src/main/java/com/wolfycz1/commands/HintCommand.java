@@ -1,14 +1,19 @@
 package com.wolfycz1.commands;
 
 import com.wolfycz1.Command;
+import com.wolfycz1.Console;
 import com.wolfycz1.Language;
+import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
 
+@AllArgsConstructor
 public class HintCommand implements Command {
+    private final Console console;
+
     @Override
     public String execute(String argument) {
-        return null;
+        return console.getCurrentRoom().getHint();
     }
 
     @Override

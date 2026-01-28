@@ -4,6 +4,7 @@ import com.wolfycz1.commands.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
@@ -20,7 +21,6 @@ public class Console {
     private final Map<String, Command> commands;
     private final List<String> commandList;
     private DialogueHandler dialogueHandler;
-    private final Scanner sc;
     private boolean exit;
     private boolean dialogueActive;
     private Room currentRoom;
@@ -31,7 +31,6 @@ public class Console {
     public Console() {
         commands = new HashMap<>();
         commandList = new ArrayList<>();
-        sc = new Scanner(System.in);
         inventory = new Inventory();
         dialogueHandler = new DialogueHandler();
     }
@@ -57,14 +56,15 @@ public class Console {
 
         register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
         register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
-        register(Language.get("cmd.hint"), new HintCommand(), Language.getArray("cmd.hint.aliases"));
+        register(Language.get("cmd.hint"), new HintCommand(this), Language.getArray("cmd.hint.aliases"));
         register(Language.get("cmd.interact"), new InteractCommand(this), Language.getArray("cmd.interact.aliases"));
         register(Language.get("cmd.pickup"), new PickupCommand(this), Language.getArray("cmd.pickup.aliases"));
         register(Language.get("cmd.drop"), new DropCommand(this), Language.getArray("cmd.drop.aliases"));
-        register(Language.get("cmd.investigate"), new InvestigateCommand(), Language.getArray("cmd.investigate.aliases"));
+        register(Language.get("cmd.investigate"), new InvestigateCommand(this), Language.getArray("cmd.investigate.aliases"));
         register(Language.get("cmd.use"), new UseCommand(), Language.getArray("cmd.use.aliases"));
         register(Language.get("cmd.exit"), new ExitCommand(), Language.getArray("cmd.exit.aliases"));
 
+        terminal.writer().println(commands.get(Language.get("cmd.investigate")).execute("INTERNAL"));
         while (!exit) {
             execute();
             log.debug("""
@@ -99,7 +99,7 @@ public class Console {
                 String response = dialogueHandler.processInput(in);
                 if (response == null) {
                     dialogueActive = false;
-                    terminal.writer().println(Language.get("console.info.convEnd"));
+                    terminal.writer().println(">> " + Language.get("console.info.convEnd"));
                 } else {
                     terminal.writer().printf(">> %s%n", response);
                 }
@@ -115,13 +115,15 @@ public class Console {
                 terminal.writer().printf(">> %s%n", commands.get(command).execute(argument));
                 exit = commands.get(command).exit();
             } else {
-                terminal.writer().println(Language.get("console.err.notRecognized", command, Language.get("cmd.help")));
+                terminal.writer().println(">> " + Language.get("console.err.notRecognized", command, Language.get("cmd.help")));
             }
             terminal.writer().println();
         } catch (NoSuchElementException e) {
             log.warn("No such element exception triggered at scanner.");
         } catch (UserInterruptException e) {
             log.warn("User interrupt Exception triggered at Terminal.writer()");
+        } catch (EndOfFileException e) {
+            log.warn("End of File Exception triggered at Line Reader.");
         }
     }
 
@@ -138,25 +140,26 @@ public class Console {
         terminal.writer().println("[DEFAULT] English");
         terminal.writer().println("[2] česky");
         terminal.writer().println("[3] polski");
-        String input = reader.readLine(">> ").trim();
+        try {
+            String input = reader.readLine(">> ").trim();
 
-        Locale locale = switch (input) {
-            case "2" -> Locale.forLanguageTag("cs-CZ");
-            case "3" -> Locale.forLanguageTag("pl-PL");
-            default -> Locale.ENGLISH;
-        };
+            Locale locale = switch (input) {
+                case "2" -> Locale.forLanguageTag("cs-CZ");
+                case "3" -> Locale.forLanguageTag("pl-PL");
+                default -> Locale.ENGLISH;
+            };
 
-        Language.load(locale);
+            Language.load(locale);
+        } catch (UserInterruptException e) {
+            log.warn("User interrupt exception triggered at Terminal.reader()");
+        }
 
         terminal.writer().println(Language.get("console.info.langSelect"));
     }
 
     private void close() {
         try {
-            sc.close();
             terminal.close();
-        } catch (IllegalStateException e) {
-            log.warn("Illegal State Exception triggered while closing Scanner.");
         } catch (IOException e) {
             log.warn("IO Exception while closing Terminal");
         }

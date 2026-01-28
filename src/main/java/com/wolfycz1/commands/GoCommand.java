@@ -23,7 +23,8 @@ public class GoCommand implements Command {
         if (room.isLocked()) return Language.get("cmd.go.err.locked", room.getName());
 
         console.setCurrentRoom(room);
-        return Language.get("cmd.go.execute", room.getName());
+        return Language.get("cmd.go.execute", room.getName()) + "\n"
+                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL");
     }
 
     @Override

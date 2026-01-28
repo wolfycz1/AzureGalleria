@@ -23,7 +23,8 @@ public class PickupCommand implements Command {
         if (!inventory.addItem(item)) return Language.get("cmd.pickup.err.invFull");
 
         currentRoom.removeItem(item);
-        return Language.get("cmd.pickup.execute", item.getName());
+        return Language.get("cmd.pickup.execute", item.getName()) + "\n"
+                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL");
     }
 
     @Override

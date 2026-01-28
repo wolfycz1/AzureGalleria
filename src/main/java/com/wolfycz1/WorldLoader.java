@@ -60,6 +60,7 @@ public class WorldLoader {
                     dto.getName(),
                     dto.getAliases(),
                     dto.getDescription(),
+                    dto.getHint(),
                     dto.isLocked()
             );
             rooms.put(dto.getName(), room);
@@ -135,6 +136,7 @@ public class WorldLoader {
         private String name;
         private List<String> aliases;
         private String description;
+        private String hint;
         private List<String> exits;
         private List<String> characters;
         private List<String> items;

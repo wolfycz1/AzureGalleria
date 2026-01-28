@@ -1,9 +1,12 @@
 package com.wolfycz1;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public class Inventory {
     private final List<Item> items;
     private static final int CAPACITY = 2;
@@ -22,7 +25,7 @@ public class Inventory {
     }
 
     public boolean hasItem(String itemName) {
-        return false;
+        return items.stream().anyMatch(i -> Objects.equals(i.getName().toLowerCase(), itemName.toLowerCase()));
     }
 
     public Item getItem(String itemName) {
@@ -30,7 +33,8 @@ public class Inventory {
     }
 
     public String listItems() {
-        return items.stream().map(Item::getName).toList().toString();
+        if (items.isEmpty()) return "";
+        else return items.stream().map(Item::getName).toList().toString();
     }
 
     private boolean isFull() {

@@ -9,15 +9,17 @@ public class Room {
     private String name;
     private List<String> aliases;
     private String description;
+    private String hint;
     private Map<String, Room> exits;
     private List<Character> characters;
     private List<Item> items;
     private boolean locked;
 
-    public Room(String name, List<String> aliases, String description, boolean locked) {
+    public Room(String name, List<String> aliases, String description, String hint, boolean locked) {
         this.name = name;
         this.aliases = aliases;
         this.description = description;
+        this.hint = hint;
         this.exits = new HashMap<>();
         this.characters = new ArrayList<>();
         this.items = new ArrayList<>();
@@ -63,14 +65,17 @@ public class Room {
     }
 
     public String listExits() {
+        if (exits.isEmpty()) return "";
         return exits.keySet().toString();
     }
 
     public String listItems() {
+        if (items.isEmpty()) return "";
         return items.stream().map(Item::getName).toList().toString();
     }
 
     public String listCharacters() {
+        if (characters.isEmpty()) return "";
         return characters.stream().map(Character::getName).toList().toString();
     }
 
