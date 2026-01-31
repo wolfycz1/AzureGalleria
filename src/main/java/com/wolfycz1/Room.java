@@ -6,13 +6,13 @@ import java.util.*;
 
 @Getter
 public class Room {
-    private String name;
-    private List<String> aliases;
-    private String description;
-    private String hint;
-    private Map<String, Room> exits;
-    private List<Character> characters;
-    private List<Item> items;
+    private final String name;
+    private final List<String> aliases;
+    private final String description;
+    private final String hint;
+    private final Map<String, Room> exits;
+    private final List<Character> characters;
+    private final List<Item> items;
     private boolean locked;
 
     public Room(String name, List<String> aliases, String description, String hint, boolean locked) {
@@ -79,5 +79,7 @@ public class Room {
         return characters.stream().map(Character::getName).toList().toString();
     }
 
-    public void unlock() {}
+    public void unlock() {
+        this.locked = false;
+    }
 }

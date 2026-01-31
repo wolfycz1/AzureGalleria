@@ -39,7 +39,20 @@
         "type": "object",
         "properties": {
           "name": {"type": "string"},
-          "startNode": {"type": ["string", "null"]}
+          "startNode": {"type": ["string", "null"]},
+          "trades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tradeIn": {"type": "string"},
+                "tradeOut": {"type": "string"},
+                "tradeDialogue": {"type": "string"}
+              },
+              "additionalProperties": false,
+              "required": ["tradeIn", "tradeOut", "tradeDialogue"]
+            }
+          }
         },
         "additionalProperties": false,
         "required": ["name", "startNode"]
@@ -52,13 +65,16 @@
         "properties": {
           "name": {"type": "string"},
           "description": {"type": "string"},
-          "pickupable": {"type": "boolean"}
+          "pickupable": {"type": "boolean"},
+          "unlocksRoom": {"type": ["string", "null"]},
+          "usageEffect": {"type": ["string", "null"]}
         },
         "additionalProperties": false,
-        "required": ["name", "description", "pickupable"]
+        "required": ["name", "description", "pickupable", "unlocksRoom", "usageEffect"]
       }
     },
     "startingRoom": {"type": "string"},
+    "winRoom": {"type": ["string", "null"]},
     "dialogues": {
       "type": "array",
       "items": {
@@ -85,5 +101,5 @@
     }
   },
   "additionalProperties": false,
-  "required": ["rooms", "characters", "items", "startingRoom", "dialogues"]
+  "required": ["rooms", "characters", "items", "startingRoom", "winRoom", "dialogues"]
 }

@@ -1,13 +1,14 @@
 package com.wolfycz1.commands;
 
+import com.wolfycz1.*;
 import com.wolfycz1.Character;
-import com.wolfycz1.Command;
-import com.wolfycz1.Console;
-import com.wolfycz1.Language;
 import lombok.AllArgsConstructor;
+import com.wolfycz1.Character.Trade;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 
+@Slf4j
 @AllArgsConstructor
 public class InteractCommand implements Command {
     private final Console console;
@@ -19,6 +20,26 @@ public class InteractCommand implements Command {
 
         Character character = console.getCurrentRoom().getCharacter(argument);
         if (character == null) return Language.get("cmd.interact.err.noChar", argument);
+
+        log.info("Character {} has trades: {}", character.getName(), character.getTrades() != null);
+        if (character.getTrades() != null) {
+            for (Trade trade : character.getTrades().values()) {
+                String tradeIn = trade.getTradeIn();
+
+                if (console.getInventory().hasItem(tradeIn)) {
+                    Item item = console.getInventory().getItem(tradeIn);
+                    console.getInventory().removeItem(item);
+
+                    if (trade.getTradeOut() != null) {
+                        console.getInventory().addItem(trade.getTradeOut());
+                    }
+
+                    console.setDialogueActive(true);
+
+                    return console.getDialogueHandler().startDialogue(character, trade.getTradeDialogue());
+                }
+            }
+        }
 
         if (character.getStartNode() == null) return Language.get("cmd.interact.err.noDialogue", character.getName());
 

@@ -27,6 +27,8 @@ public class Console {
     private final Inventory inventory;
     private Terminal terminal;
     private LineReader reader;
+    private boolean winState;
+    private Room winRoom;
 
     public Console() {
         commands = new HashMap<>();
@@ -48,11 +50,16 @@ public class Console {
         setLanguage();
 
         WorldLoader worldLoader = new WorldLoader();
-        currentRoom = worldLoader.load(Language.get("data.json"));
+        Room[] loadedRooms = worldLoader.load(Language.get("data.json"));
+        currentRoom = loadedRooms[0];
         if (currentRoom == null) {
             close();
             return;
         }
+        winRoom = loadedRooms[1];
+
+        inventory.addItem(currentRoom.getExit("Cinema Lobby").getExit("Food Court").getItem("Old Pizza Slice"));
+        inventory.addItem(currentRoom.getExit("Electronics Store").getItem("Fusion Battery"));
 
         register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
         register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
@@ -61,7 +68,7 @@ public class Console {
         register(Language.get("cmd.pickup"), new PickupCommand(this), Language.getArray("cmd.pickup.aliases"));
         register(Language.get("cmd.drop"), new DropCommand(this), Language.getArray("cmd.drop.aliases"));
         register(Language.get("cmd.investigate"), new InvestigateCommand(this), Language.getArray("cmd.investigate.aliases"));
-        register(Language.get("cmd.use"), new UseCommand(), Language.getArray("cmd.use.aliases"));
+        register(Language.get("cmd.use"), new UseCommand(this), Language.getArray("cmd.use.aliases"));
         register(Language.get("cmd.exit"), new ExitCommand(), Language.getArray("cmd.exit.aliases"));
 
         terminal.writer().println(commands.get(Language.get("cmd.investigate")).execute("INTERNAL"));
@@ -76,6 +83,12 @@ public class Console {
                         Inventory: {}
                     """, currentRoom.getName(), currentRoom.getAliases(), currentRoom.isLocked() ? "LOCKED" : "UNLOCKED",
                     currentRoom.listItems(), currentRoom.listCharacters(), currentRoom.listExits(), inventory.listItems());
+
+            if (winState && (winRoom == null || winRoom == currentRoom)) {
+                terminal.writer().println(Language.get("win.message"));
+                close();
+                return;
+            }
         }
         close();
     }

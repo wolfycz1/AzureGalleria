@@ -12,6 +12,12 @@ public class DialogueHandler {
         return formatNode();
     }
 
+    public String startDialogue(Character character, DialogueNode startDialogue) {
+        this.character = character;
+        this.currentNode = startDialogue;
+        return formatNode();
+    }
+
     public String processInput(String input) {
         int choiceIndex;
         try {

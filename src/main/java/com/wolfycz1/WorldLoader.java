@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wolfycz1.Item.UsageEffect;
+
 @Slf4j
 public class WorldLoader {
     private final Map<String, Room> rooms = new HashMap<>();
@@ -18,9 +20,9 @@ public class WorldLoader {
     private final Map<String, Item> items = new HashMap<>();
     private final Map<String, DialogueNode> dialogueNodes = new HashMap<>();
 
-    public Room load(String filePath) {
+    public Room[] load(String filePath) {
         rooms.clear(); characters.clear(); items.clear();
-        try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath)){
+        try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath)) {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);                            // IGNORES $SCHEMA
             if (inputStream == null) {
@@ -32,7 +34,10 @@ public class WorldLoader {
 
             createDTOs(worldMap);
             assignDTOs(worldMap);
-            return rooms.get(worldMap.getStartingRoom());
+
+            Room winRoom = null;
+            if (worldMap.getWinRoom() != null) winRoom = rooms.get(worldMap.getWinRoom());
+            return new Room[]{rooms.get(worldMap.getStartingRoom()), winRoom};
         } catch (IOException e) {
             log.error("IO Exception when reading {}", filePath);
             return null;
@@ -46,7 +51,9 @@ public class WorldLoader {
         }
 
         for (ItemDTO dto : worldMap.getItems()) {
-            Item item = new Item(dto.getName(), dto.getDescription(), dto.isPickupable());
+            UsageEffect usageEffect = UsageEffect.fromString(dto.getUsageEffect());
+            log.info("Item {} has the usage effect {}", dto.getName(), usageEffect);
+            Item item = new Item(dto.getName(), dto.getDescription(), dto.isPickupable(), usageEffect);
             items.put(dto.getName(), item);
         }
 
@@ -118,6 +125,34 @@ public class WorldLoader {
                 DialogueNode startNode = dialogueNodes.get(characterDTO.getStartNode());
                 character.setStartNode(startNode);
             }
+
+            log.info("CharacterDTO {} has trades: {}", characterDTO.getName(), characterDTO.getTrades() != null);
+            if (characterDTO.getTrades() != null) {
+                for (TradeDTO dto : characterDTO.getTrades()) {
+                    Item tradeOut = items.get(dto.getTradeOut());
+                    DialogueNode tradeDialogue = dialogueNodes.get(dto.getTradeDialogue());
+
+                    if (tradeOut != null && tradeDialogue != null) {
+                        character.addTrade(dto.getTradeIn(), tradeOut, tradeDialogue);
+                    } else {
+                        log.warn("Trade for {} is missing valid Item or Dialogue references.", character.getName());
+                    }
+                }
+            }
+        }
+
+        for (ItemDTO itemDTO : worldMap.getItems()) {
+            if (itemDTO.getUnlocksRoom() != null) {
+                Item item = items.get(itemDTO.getName());
+                Room room = rooms.get(itemDTO.getUnlocksRoom());
+
+                if (item != null && room != null) {
+                    item.setUnlocksRoom(room);
+                    log.info("Item {} unlocks {}", item.getName(), room.getName());
+                } else {
+                    log.warn("Item {} unlocks a non-existent room {}", itemDTO.getName(), itemDTO.getUnlocksRoom());
+                }
+            }
         }
         log.info("DTOs assigned.");
     }
@@ -129,6 +164,7 @@ public class WorldLoader {
         private List<ItemDTO> items;
         private List<DialogueNodeDTO> dialogues;
         private String startingRoom;
+        private String winRoom;
     }
 
     @Data
@@ -147,6 +183,14 @@ public class WorldLoader {
     private static class CharacterDTO {
         private String name;
         private String startNode;
+        private List<TradeDTO> trades;
+    }
+
+    @Data
+    private static class TradeDTO {
+        private String tradeIn;
+        private String tradeOut;
+        private String tradeDialogue;
     }
 
     @Data
@@ -154,6 +198,8 @@ public class WorldLoader {
         private String name;
         private String description;
         private boolean pickupable;
+        private String unlocksRoom;
+        private String usageEffect;
     }
 
     @Data

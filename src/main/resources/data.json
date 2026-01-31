@@ -95,7 +95,14 @@
   "characters": [
     {
       "name": "The Angler",
-      "startNode": null
+      "startNode": null,
+      "trades": [
+        {
+          "tradeIn": "Old Pizza Slice",
+          "tradeOut": "Rusty Key",
+          "tradeDialogue": "angler_trade"
+        }
+      ]
     },
     {
       "name": "MEI",
@@ -106,25 +113,34 @@
     {
       "name": "Old Pizza Slice",
       "description": "",
-      "pickupable": true
+      "pickupable": true,
+      "unlocksRoom": null,
+      "usageEffect": null
     },
     {
       "name": "Rusty Key",
       "description": "",
-      "pickupable": true
+      "pickupable": true,
+      "unlocksRoom": "Maintenance Hallway",
+      "usageEffect": null
     },
     {
       "name": "Fusion Battery",
       "description": "",
-      "pickupable": true
+      "pickupable": true,
+      "unlocksRoom": null,
+      "usageEffect": "RESTORE_POWER"
     },
     {
       "name": "Game Token",
       "description": "",
-      "pickupable": true
+      "pickupable": true,
+      "unlocksRoom": null,
+      "usageEffect": null
     }
   ],
   "startingRoom": "Central Atrium",
+  "winRoom": "Cargo Bay",
   "dialogues": [
     {
       "id": "test_dialogue",
@@ -143,6 +159,11 @@
     {
       "id": "test_dialogue_2",
       "text": "This is the final dialogue",
+      "options": null
+    },
+    {
+      "id": "angler_trade",
+      "text": "You have succesfully traded the item.",
       "options": null
     }
   ]
