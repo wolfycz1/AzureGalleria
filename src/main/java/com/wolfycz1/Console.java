@@ -58,9 +58,6 @@ public class Console {
         }
         winRoom = loadedRooms[1];
 
-        inventory.addItem(currentRoom.getExit("Cinema Lobby").getExit("Food Court").getItem("Old Pizza Slice"));
-        inventory.addItem(currentRoom.getExit("Electronics Store").getItem("Fusion Battery"));
-
         register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
         register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
         register(Language.get("cmd.hint"), new HintCommand(this), Language.getArray("cmd.hint.aliases"));
