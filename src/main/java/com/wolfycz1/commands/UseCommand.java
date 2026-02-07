@@ -23,6 +23,9 @@ public class UseCommand implements Command {
         if (item.getUnlocksRoom() != null) {
             Room targetRoom = item.getUnlocksRoom();
             if (currentRoom.getExit(targetRoom.getName()) != null) {
+                if (!targetRoom.isLocked()) {
+                    return Language.get("cmd.use.err.unlocked");
+                }
                 targetRoom.unlock();
                 return Language.get("cmd.use.execute.key", targetRoom.getName());
             }
@@ -32,9 +35,10 @@ public class UseCommand implements Command {
         if (item.getUsageEffect() != null) {
             switch (item.getUsageEffect()) {
                 case UsageEffect.RESTORE_POWER -> {
-                    if (currentRoom.getName().equalsIgnoreCase("Generator Room")) {
+                    if (currentRoom.getName().equalsIgnoreCase(Language.get("room.generatorRoom"))) {
                         console.setWinState(true);
-                        return Language.get("cmd.use.execute.restorePower");
+                        currentRoom.setDescription(Language.get("cmd.use.restorePower.newDesc"));
+                        return Language.get("cmd.use.execute.restorePower", item.getName());
                     }
                     return Language.get("cmd.use.err.restorePower");
                 }

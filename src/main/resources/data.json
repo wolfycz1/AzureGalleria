@@ -4,8 +4,8 @@
     {
       "name": "Central Atrium",
       "aliases": ["CA"],
-      "description": "DESCRIPTION PLACEHOLDER",
-      "hint": "HELP PLACEHOLDER",
+      "description": "The cold water seeps through your shoes as you step into the domed chamber. In the center a silent figure clad in a bright yellow raincoat sits motionless on the edge of a fountain fishing in the dark. Behind the reception desk stands a glitching hologram designed to guide the shoppers.",
+      "hint": "The Angler seems to be looking for a bait.",
       "exits": ["Cinema Lobby", "Electronics Store", "Fashion Boutique", "Maintenance Hallway"],
       "characters": ["The Angler", "MEI"],
       "items": [],
@@ -14,8 +14,8 @@
     {
       "name": "Cinema Lobby",
       "aliases": ["CL"],
-      "description": "",
-      "hint": "",
+      "description": "A scent of buttered popcorn teases you. You feel like you've arrived twenty years late for a premiere. The ticket booth is empty and you can't see anything of value around you.",
+      "hint": "Why not stop for a snack at the Food Court?",
       "exits": ["Central Atrium", "Food Court"],
       "characters": [],
       "items": [],
@@ -24,8 +24,8 @@
     {
       "name": "Food Court",
       "aliases": ["FC"],
-      "description": "",
-      "hint": "",
+      "description": "You push floating plastic chairs out of your way to get through here. The neon signs above you are barely flashing on the verge of death. Among the debris of a former dining table you spot an Old Pizza Slice.",
+      "hint": "You spot an Old Pizza Slice. It could be used as a bait.",
       "exits": ["Cinema Lobby"],
       "characters": [],
       "items": ["Old Pizza Slice"],
@@ -34,8 +34,8 @@
     {
       "name": "Maintenance Hallway",
       "aliases": ["MH"],
-      "description": "",
-      "hint": "",
+      "description": "The spinning red emergency lights disorient you, covering your hands in a bloody strobe. Steam hisses from fractured pipes, making it hard to breathe.",
+      "hint": "Observe the Cargo Bay for a way to escape.",
       "exits": ["Central Atrium", "Generator Room", "Cargo Bay"],
       "characters": [],
       "items": [],
@@ -44,8 +44,8 @@
     {
       "name": "Electronics Store",
       "aliases": ["ES"],
-      "description": "",
-      "hint": "",
+      "description": "You step into the store. It's filled to the ceiling with old CRT televisions, displaying only static and white noise. Wandering through the shop, you find yourself in the Fusion Battery section.",
+      "hint": "You find yourself in the Fusion Battery section. The Fusion Battery could be used in a generator.",
       "exits": ["Central Atrium", "Arcade"],
       "characters": [],
       "items": ["Fusion Battery"],
@@ -54,8 +54,8 @@
     {
       "name": "Arcade",
       "aliases": ["A"],
-      "description": "",
-      "hint": "",
+      "description": "You sink into the sodden carpet. It's darker here, only a few still operational arcade machines cast light that reflects of the sunken floor.",
+      "hint": "One does not recommend using the Game Token on these machines if you do not want to get shocked.",
       "exits": ["Electronics Store"],
       "characters": [],
       "items": ["Game Token"],
@@ -64,8 +64,8 @@
     {
       "name": "Fashion Boutique",
       "aliases": ["FB"],
-      "description": "",
-      "hint": "",
+      "description": "You catch movement in your peripheral vision, but it's just your reflection in a shattered mirror. The pale mannequins seem to turn their heads toward you when you look away. The displays are empty, offering nothing of value.",
+      "hint": "The displays are empty, offering nothing of value.",
       "exits": ["Central Atrium"],
       "characters": [],
       "items": [],
@@ -74,8 +74,8 @@
     {
       "name": "Generator Room",
       "aliases": ["GR"],
-      "description": "",
-      "hint": "",
+      "description": "You walk through the door marked Authorized Personnl Only. The air here is thick with the taste of copper. A massive generator sits here. It's terrifyingly quiet; a machine this size should be deafening.",
+      "hint": "The generator seems to power the Cargo Bay elevator. Find a Fusion Battery to fix it.",
       "exits": ["Maintenance Hallway"],
       "characters": [],
       "items": [],
@@ -84,8 +84,8 @@
     {
       "name": "Cargo Bay",
       "aliases": ["CB"],
-      "description": "",
-      "hint": "",
+      "description": "At final, you find yourself in a large industrial loading zone. Iron chains hanging down like vines. The freight elevator in the center looks like your only ticket out of here, but its control buttons are out of power.",
+      "hint": "Its control buttons are out of power. Fix the power source in the Generator Room.",
       "exits": ["Maintenance Hallway"],
       "characters": [],
       "items": [],
@@ -112,28 +112,28 @@
   "items": [
     {
       "name": "Old Pizza Slice",
-      "description": "",
+      "description": "Picking up the Old Pizza Slice, you deduct that it's no longer safe for human consumption.",
       "pickupable": true,
       "unlocksRoom": null,
       "usageEffect": null
     },
     {
       "name": "Rusty Key",
-      "description": "",
+      "description": "Observing the Rusty Key, you wonder what it unlocks.",
       "pickupable": true,
       "unlocksRoom": "Maintenance Hallway",
       "usageEffect": null
     },
     {
       "name": "Fusion Battery",
-      "description": "",
+      "description": "Taking the Fusion Battery into your hands, you read that it's used for power generators.",
       "pickupable": true,
       "unlocksRoom": null,
       "usageEffect": "RESTORE_POWER"
     },
     {
       "name": "Game Token",
-      "description": "",
+      "description": "Sliding the Game Token in your pocket, you get the urge to play a game.",
       "pickupable": true,
       "unlocksRoom": null,
       "usageEffect": null
@@ -163,7 +163,7 @@
     },
     {
       "id": "angler_trade",
-      "text": "You have succesfully traded the item.",
+      "text": "You have succesfully traded the item. (PLACEHOLDER)",
       "options": null
     }
   ]

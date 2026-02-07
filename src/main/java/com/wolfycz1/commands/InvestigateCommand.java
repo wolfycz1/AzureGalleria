@@ -21,7 +21,7 @@ public class InvestigateCommand implements Command {
                 .append(" ".repeat(100 / 2 - roomName.length() / 2)).append("\n");
         sb.append("=".repeat(100)).append("\n\n");
 
-        sb.append(currentRoom.getDescription()).append("\n\n");
+        sb.append(console.breakupStringToLines(currentRoom.getDescription())).append("\n");
 
         if (currentRoom.listItems().isEmpty())
             sb.append(Language.get("cmd.investigate.noItems")).append("\n");

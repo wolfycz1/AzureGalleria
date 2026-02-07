@@ -1,14 +1,16 @@
 package com.wolfycz1;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
 @Getter
+@Setter
 public class Room {
     private final String name;
     private final List<String> aliases;
-    private final String description;
+    private String description;
     private final String hint;
     private final Map<String, Room> exits;
     private final List<Character> characters;

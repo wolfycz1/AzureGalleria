@@ -68,6 +68,9 @@ public class Console {
         register(Language.get("cmd.use"), new UseCommand(this), Language.getArray("cmd.use.aliases"));
         register(Language.get("cmd.exit"), new ExitCommand(), Language.getArray("cmd.exit.aliases"));
 
+        terminal.writer().println(breakupStringToLines(Language.get("game.intro")) + "\nPress enter to start.");
+        reader.readLine();
+
         terminal.writer().println(commands.get(Language.get("cmd.investigate")).execute("INTERNAL"));
         while (!exit) {
             execute();
@@ -82,7 +85,7 @@ public class Console {
                     currentRoom.listItems(), currentRoom.listCharacters(), currentRoom.listExits(), inventory.listItems());
 
             if (winState && (winRoom == null || winRoom == currentRoom)) {
-                terminal.writer().println(Language.get("win.message"));
+                terminal.writer().println(breakupStringToLines(Language.get("win.message")));
                 close();
                 return;
             }
@@ -164,7 +167,25 @@ public class Console {
             log.warn("User interrupt exception triggered at Terminal.reader()");
         }
 
-        terminal.writer().println(Language.get("console.info.langSelect"));
+        terminal.writer().println(Language.get("console.info.langSelect") + "\n");
+    }
+
+    public String breakupStringToLines(String text) {
+        StringBuilder line = new StringBuilder();
+        StringBuilder formatted = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (word.contains("\n")) {
+                formatted.append(line);
+                line.setLength(0);
+            }
+            if ((line.length() + word.length()) > 100) {
+                formatted.append(line).append("\n");
+                line.setLength(0);
+            }
+            line.append(word).append(" ");
+        }
+        formatted.append(line).append("\n");
+        return formatted.toString();
     }
 
     private void close() {
