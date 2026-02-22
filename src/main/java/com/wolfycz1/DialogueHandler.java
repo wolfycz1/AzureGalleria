@@ -44,7 +44,26 @@ public class DialogueHandler {
     private String formatNode() {
         StringBuilder sb = new StringBuilder();
         sb.append("-".repeat(97)).append("\n");
-        sb.append(character.getName()).append(": ").append(currentNode.getText()).append("\n");
+
+        String text = currentNode.getText();
+        StringBuilder line = new StringBuilder();
+        StringBuilder formattedText = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (word.contains("\n")) {
+                formattedText.append(line);
+                line.setLength(0);
+            }
+
+            if (line.length() + word.length() > 98 - character.getName().length()) {
+                formattedText.append(line).append("\n");
+                line.setLength(0);
+            }
+
+            line.append(word).append(" ");
+        }
+        formattedText.append(line).append("\n");
+        sb.append(character.getName()).append(": ").append(formattedText);
+
         sb.append("-".repeat(100)).append("\n");
 
         List<DialogueOption> options = currentNode.getOptions();

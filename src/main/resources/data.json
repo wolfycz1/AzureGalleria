@@ -106,7 +106,7 @@
     },
     {
       "name": "MEI",
-      "startNode": "test_dialogue"
+      "startNode": "welcome_dialogue"
     }
   ],
   "items": [
@@ -143,28 +143,209 @@
   "winRoom": "Cargo Bay",
   "dialogues": [
     {
-      "id": "test_dialogue",
-      "text": "This is a test dialogue.",
+      "id": "welcome_dialogue",
+      "text": "Welcome to the Azure Galleria! We are currently experiencing a minor ▚▜▞▐ humidity anomaly. Please excuse the dampness. I am M.E.I., your Mall Electronic Interactive™. How can I elevate your shopping experience today?",
       "options": [
         {
-          "label": "This is a dialogue option",
-          "nextNode": null
+          "label": "How do I get out of here?",
+          "nextNode": "option_leave"
         },
         {
-          "label": "This is a second option",
-          "nextNode": "test_dialogue_2"
+          "label": "I need to get into the Maintenance Hallway.",
+          "nextNode": "option_maintenance"
+        },
+        {
+          "label": "What stores are in this mall?",
+          "nextNode": "option_shops"
         }
       ]
     },
     {
-      "id": "test_dialogue_2",
-      "text": "This is the final dialogue",
+      "id": "option_leave",
+      "text": "Thank you for your visit! Unfortunately, the main escalators are currently ▙▚▛▄ cRUSHed beneath several １０００NaN tons of concrete. Please ask a store personnel to unlock the Cargo Bay elevator. ▚▛▄▙ WARNING: Requested facility power offline!",
+      "options": [
+        {
+          "label": "How can I restore the power?",
+          "nextNode": "option_power"
+        },
+        {
+          "label": "(Go back.)",
+          "nextNode": "welcome_dialogue"
+        }
+      ]
+    },
+    {
+      "id": "option_power",
+      "text": "Access denied. Insufficient access l-▜▚▙▙ Backup generator requires high-capacity Fusion batter-▚▚▉▛ \"Fusion??Battery\" １[undefined] available in Electronics Store.",
+      "options": [
+        {
+          "label": "I have another question. (Go back.)",
+          "nextNode": "welcome_dialogue"
+        }
+      ]
+    },
+    {
+      "id": "option_maintenance",
+      "text": "Access to the Maintenance Sector is strictly prohibited for shoppers. Only authorized personnel with a key may enter. If you require a custodian, please look out for a staff member in the Central Atrium.",
+      "options": [
+        {
+          "label": "I also wanted to ask... (Go back.)",
+          "nextNode": "welcome_dialogue"
+        }
+      ]
+    },
+    {
+      "id": "option_shops",
+      "text": "We have over fifty luxury retailers! Pursue eternity in fashion at the 'Reiden Boutique'! Experience the grand premiere of Marechaussee d’Focalores' newest cinematic masterpiece, popcorn now with a 5% discount! ...",
+      "options": [
+        {
+          "label": "(Continue...)",
+          "nextNode": "option_shops2"
+        }
+      ]
+    },
+    {
+      "id": "option_shops2",
+      "text": "... Or purchase a brand new TV at 'Haru's Electronics' and get two months of VHS rental for free! (Ads on various shops continue to play...)",
       "options": null
     },
     {
       "id": "angler_trade",
-      "text": "You have succesfully traded the item. (PLACEHOLDER)",
-      "options": null
+      "text": "The figure in the yellow raincoat slowly turns. A gloved hand emerges to take the pizza slice. The fishing line is cast deep into the dark water. Almost instantly it is reeled back in. Dangling from the hook is a heavy key. The key is unclipped and tossed at your feet.\n\"The water took the neon in '87,\" a raspy voice echoes from beneath the hood. \"Swallowed the shoppers, the staff... everything. Take the key. Find a way out before the water claims another.\"",
+      "options": [
+        {
+          "label": "Who are you?",
+          "nextNode": "option_who"
+        },
+        {
+          "label": "What are you fishing for?",
+          "nextNode": "option_fishing"
+        },
+        {
+          "label": "How do I get out of here?",
+          "nextNode": "option_escape"
+        },
+        {
+          "label": "What exactly happened in 1987?",
+          "nextNode": "option_1987"
+        },
+        {
+          "label": "Is there anyone else down here?",
+          "nextNode": "option_alive"
+        },
+        {
+          "label": "What's wrong with the holographic receptionist?",
+          "nextNode": "option_mei"
+        },
+        {
+          "label": "Why don't you leave?",
+          "nextNode": "option_why"
+        }
+      ]
+    },
+    {
+      "id": "angler_ask",
+      "text": "Ask.",
+      "options": [
+        {
+          "label": "Who are you?",
+          "nextNode": "option_who"
+        },
+        {
+          "label": "What are you fishing for?",
+          "nextNode": "option_fishing"
+        },
+        {
+          "label": "How do I get out of here?",
+          "nextNode": "option_escape"
+        },
+        {
+          "label": "What exactly happened in 1987?",
+          "nextNode": "option_1987"
+        },
+        {
+          "label": "Is there anyone else down here?",
+          "nextNode": "option_alive"
+        },
+        {
+          "label": "What's wrong with the holographic receptionist?",
+          "nextNode": "option_mei"
+        },
+        {
+          "label": "Why don't you leave?",
+          "nextNode": "option_why"
+        }
+      ]
+    },
+    {
+      "id": "option_who",
+      "text": "A name is just another thing to drown.",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
+    },
+    {
+      "id": "option_fishing",
+      "text": "Fish. Isn't it obvious?",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
+    },
+    {
+      "id": "option_escape",
+      "text": "A finger of The Angler points towards the dark Maintenance Hallway.",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
+    },
+    {
+      "id": "option_1987",
+      "text": "The river broke its banks. Million gallons of water, nowhere to go but down. The neon signs shorted out one by one. Then the screaming stopped.",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
+    },
+    {
+      "id": "option_alive",
+      "text": "Alive? You're the only one I've spoken to in decades. So... most likely not.",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
+    },
+    {
+      "id": "option_mei",
+      "text": "MEI? Her servers drowned years ago. What you see is just a ghost in the machine, looping the same corporate lies. Don't listen to her cheer. She doesn't know she's dead.",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
+    },
+    {
+      "id": "option_why",
+      "text": "Leave? And go where? The surface is loud. The sun is blinding. Down here, it is quiet, peaceful.",
+      "options": [
+        {
+          "label": "Ask again.",
+          "nextNode": "angler_ask"
+        }
+      ]
     }
   ]
 }
