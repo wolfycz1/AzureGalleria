@@ -14,7 +14,7 @@ class DialogueTest {
     @BeforeEach
     void setUp() {
         dialogueNode = new DialogueNode("id", "text");
-        dialogueOption = new DialogueOption("label", null);
+        dialogueOption = new DialogueOption("label", dialogueNode);
         dialogueHandler = new DialogueHandler();
         character = new Character("name");
         character.setStartNode(dialogueNode);
