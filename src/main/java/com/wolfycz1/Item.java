@@ -3,6 +3,10 @@ package com.wolfycz1;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Represents an interactable object within the game.
+ * @author wolfycz1
+ */
 @Getter
 @Setter
 public class Item {
@@ -19,6 +23,9 @@ public class Item {
         this.usageEffect = usageEffect;
     }
 
+    /**
+     * Defines the specific effects that an item can trigger when used.
+     */
     public enum UsageEffect {
         RESTORE_POWER("RESTORE_POWER");
 
@@ -28,6 +35,11 @@ public class Item {
             this.usageEffectName = usageEffectName;
         }
 
+        /**
+         * Parses a string into its corresponding UsageEffect enum value.
+         * @param usageEffectName The string to parse.
+         * @return The matching UsageEffect, or null if no match is found.
+         */
         public static UsageEffect fromString(String usageEffectName) {
             for (UsageEffect usageEffect : UsageEffect.values()) {
                 if (usageEffect.usageEffectName.equalsIgnoreCase(usageEffectName)) {

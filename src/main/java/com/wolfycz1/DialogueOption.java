@@ -3,6 +3,10 @@ package com.wolfycz1;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Represents a specific choice available during a conversation.
+ * @author wolfycz1
+ */
 @Getter
 @AllArgsConstructor
 public class DialogueOption {

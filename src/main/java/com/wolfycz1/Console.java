@@ -14,6 +14,10 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.*;
 import java.util.*;
 
+/**
+ * The core controller for the game. Manages the primary game loop, terminal IO via JLine3 and global game state.
+ * @author wolfycz1
+ */
 @Slf4j
 @Getter
 @Setter
@@ -37,36 +41,15 @@ public class Console {
         dialogueHandler = new DialogueHandler();
     }
 
+    /**
+     * Initializes the game environment and starts the main game loop.
+     * Initializes the terminal, prompts for language selection, loads the world data and registers all playable commands.
+     */
     public void initialize() {
-        try {
-            terminal = TerminalBuilder.builder().system(true).jansi(true).build();
-        } catch (IOException e) {
-            log.warn("IO Exception triggered while building terminal.");
-        }
-
-        reader = LineReaderBuilder.builder().terminal(terminal).build();
-        JLineAppender.setLineReader(reader);
-
+        setupTerminal();
         setLanguage();
-
-        WorldLoader worldLoader = new WorldLoader();
-        Room[] loadedRooms = worldLoader.load(Language.get("data.json"));
-        currentRoom = loadedRooms[0];
-        if (currentRoom == null) {
-            close();
-            return;
-        }
-        winRoom = loadedRooms[1];
-
-        register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
-        register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
-        register(Language.get("cmd.hint"), new HintCommand(this), Language.getArray("cmd.hint.aliases"));
-        register(Language.get("cmd.interact"), new InteractCommand(this), Language.getArray("cmd.interact.aliases"));
-        register(Language.get("cmd.pickup"), new PickupCommand(this), Language.getArray("cmd.pickup.aliases"));
-        register(Language.get("cmd.drop"), new DropCommand(this), Language.getArray("cmd.drop.aliases"));
-        register(Language.get("cmd.investigate"), new InvestigateCommand(this), Language.getArray("cmd.investigate.aliases"));
-        register(Language.get("cmd.use"), new UseCommand(this), Language.getArray("cmd.use.aliases"));
-        register(Language.get("cmd.exit"), new ExitCommand(), Language.getArray("cmd.exit.aliases"));
+        setupWorld();
+        registerCommands();
 
         terminal.writer().println(breakupStringToLines(Language.get("game.intro")) + "\nPress enter to start.");
         reader.readLine();
@@ -74,14 +57,8 @@ public class Console {
         terminal.writer().println(commands.get(Language.get("cmd.investigate")).execute("INTERNAL"));
         while (!exit) {
             execute();
-            log.debug("""
-                    STATE
-                        Current Room: {} {} {}
-                            Items: {}
-                            Characters: {}
-                            Exits: {}
-                        Inventory: {}
-                    """, currentRoom.getName(), currentRoom.getAliases(), currentRoom.isLocked() ? "LOCKED" : "UNLOCKED",
+            log.debug("STATE\n\tCurrent Room: {} {} {}\n\t\tItems: {}\n\t\tCharacters {}\n\t\tExits: {}\n\tInventory: {}",
+                    currentRoom.getName(), currentRoom.getAliases(), currentRoom.isLocked() ? "LOCKED" : "UNLOCKED",
                     currentRoom.listItems(), currentRoom.listCharacters(), currentRoom.listExits(), inventory.listItems());
 
             if (winState && (winRoom == null || winRoom == currentRoom)) {
@@ -93,6 +70,12 @@ public class Console {
         close();
     }
 
+    /**
+     * Registers a command and its associated aliases into the game.
+     * @param name The primary name of the command.
+     * @param command The Command object implementation to execute.
+     * @param aliases Alternate strings that trigger the same command.
+     */
     private void register(String name, Command command, String... aliases) {
         log.info("Registering command {} with aliases {}", name, aliases);
         commands.put(name, command);
@@ -102,6 +85,10 @@ public class Console {
         commandList.add(name);
     }
 
+    /**
+     * Reads input from the player and routes it appropriately.
+     * If a conversation is active, the input is sent to the DialogueHandler.
+     */
     private void execute() {
         try {
             String in = reader.readLine(">> ");
@@ -109,19 +96,13 @@ public class Console {
             in = in.trim().toLowerCase();
 
             if (dialogueActive) {
-                String response = dialogueHandler.processInput(in);
-                if (response == null) {
-                    dialogueActive = false;
-                    terminal.writer().println(">> " + Language.get("console.info.convEnd"));
-                } else {
-                    terminal.writer().printf(">> %s%n", response);
-                }
+                handleDialogue(in);
                 return;
             }
 
-            String[] parsedInput = parse(in);
-            String command = parsedInput[0];
-            String argument = parsedInput[1];
+            ParsedCommand parsedInput = parse(in);
+            String command = parsedInput.command();
+            String argument = parsedInput.argument();
             log.info("Command: \"{}\" Argument: \"{}\"", command, argument);
 
             if (commands.containsKey(command)) {
@@ -140,15 +121,44 @@ public class Console {
         }
     }
 
-    private String[] parse(String input) {
+    /**
+     * Splits raw user input into a command keyword and its subsequent argument.
+     * @param input The raw string input.
+     * @return A {@link ParsedCommand} record containing the separated command and argument.
+     */
+    private ParsedCommand parse(String input) {
         String[] inputParts = input.trim().split("\\s+", 2);
 
         String command = inputParts[0];
         String argument = (inputParts.length > 1) ? inputParts[1] : "";
 
-        return new String[]{command, argument};
+        return new ParsedCommand(command, argument);
     }
 
+    /**
+     * A data carrier representing a player's raw input split into a command and an argument.
+     * @param command The primary command keyword.
+     * @param argument The argument of the command.
+     */
+    private record ParsedCommand(String command, String argument) {}
+
+    /**
+     * Initializes the JLine3 terminal and configures the custom logging appender.
+     */
+    private void setupTerminal() {
+        try {
+            terminal = TerminalBuilder.builder().system(true).jansi(true).build();
+        } catch (IOException e) {
+            log.warn("IO Exception triggered while building terminal.");
+        }
+
+        reader = LineReaderBuilder.builder().terminal(terminal).build();
+        JLineAppender.setLineReader(reader);
+    }
+
+    /**
+     * Prompts the player to select their preferred language and loads the corresponding ResourceBundle for localization.
+     */
     private void setLanguage() {
         terminal.writer().println("[DEFAULT] English");
         terminal.writer().println("[2] česky");
@@ -170,6 +180,56 @@ public class Console {
         terminal.writer().println(Language.get("console.info.langSelect") + "\n");
     }
 
+    /**
+     * Loads the game world from the JSON data file and sets the initial player state.
+     */
+    private void setupWorld() {
+        WorldLoader worldLoader = new WorldLoader();
+        WorldLoader.LoadedWorld loadedWorld = worldLoader.load(Language.get("data.json"));
+        if (loadedWorld == null) {
+            close();
+            return;
+        }
+        currentRoom = loadedWorld.startingRoom();
+        winRoom = loadedWorld.winRoom();
+    }
+
+    /**
+     * Instantiates and registers all available commands.
+     */
+    private void registerCommands() {
+        register(Language.get("cmd.go"), new GoCommand(this), Language.getArray("cmd.go.aliases"));
+        register(Language.get("cmd.help"), new HelpCommand(this), Language.getArray("cmd.help.aliases"));
+        register(Language.get("cmd.hint"), new HintCommand(this), Language.getArray("cmd.hint.aliases"));
+        register(Language.get("cmd.interact"), new InteractCommand(this), Language.getArray("cmd.interact.aliases"));
+        register(Language.get("cmd.pickup"), new PickupCommand(this), Language.getArray("cmd.pickup.aliases"));
+        register(Language.get("cmd.drop"), new DropCommand(this), Language.getArray("cmd.drop.aliases"));
+        register(Language.get("cmd.investigate"), new InvestigateCommand(this), Language.getArray("cmd.investigate.aliases"));
+        register(Language.get("cmd.use"), new UseCommand(this), Language.getArray("cmd.use.aliases"));
+        register(Language.get("cmd.exit"), new ExitCommand(), Language.getArray("cmd.exit.aliases"));
+    }
+
+    /**
+     * Passes input to the DialogueHandler.
+     * @param input The numeric string of the dialogue option.
+     */
+    private void handleDialogue(String input) {
+        DialogueHandler.DialogueResult response = dialogueHandler.processInput(input);
+        switch (response.status()) {
+            case ENDED -> {
+                dialogueActive = false;
+                terminal.writer().println(">> " + Language.get("console.info.convEnd"));
+            }
+            case ERROR -> terminal.writer().println(response.output());
+            case CONTINUE -> terminal.writer().printf(">> %s%n", response.output());
+        }
+    }
+
+    /**
+     * Word-wraps a string of text to fit within a 100-character width.
+     * @param text The raw string to be formatted.
+     * @return The formatted string containing line breaks.
+     */
     public String breakupStringToLines(String text) {
         StringBuilder line = new StringBuilder();
         StringBuilder formatted = new StringBuilder();
@@ -188,6 +248,9 @@ public class Console {
         return formatted.toString();
     }
 
+    /**
+     * Safely shuts down the terminal connection before exiting the program.
+     */
     private void close() {
         try {
             terminal.close();

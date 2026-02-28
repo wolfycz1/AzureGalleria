@@ -13,6 +13,11 @@ import java.util.Map;
 
 import com.wolfycz1.Item.UsageEffect;
 
+/**
+ * Handles the loading of the game world from a JSON file.
+ * Uses a two-pass loading system to instantiate domain objects and resolve circular dependencies.
+ * @author wolfycz1
+ */
 @Slf4j
 public class WorldLoader {
     private final Map<String, Room> rooms = new HashMap<>();
@@ -20,8 +25,14 @@ public class WorldLoader {
     private final Map<String, Item> items = new HashMap<>();
     private final Map<String, DialogueNode> dialogueNodes = new HashMap<>();
 
-    public Room[] load(String filePath) {
-        rooms.clear(); characters.clear(); items.clear();
+    /**
+     * Reads and parses the world file to construct the game state.
+     * @param filePath The relative path to the JSON world file.
+     * @return A {@link LoadedWorld} record containing the starting room and the optional win room.
+     * Returns null if the file cannot be read or is missing.
+     */
+    public LoadedWorld load(String filePath) {
+        rooms.clear(); characters.clear(); items.clear(); dialogueNodes.clear();
         try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath)) {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);                            // IGNORES $SCHEMA
@@ -36,14 +47,33 @@ public class WorldLoader {
             assignDTOs(worldMap);
 
             Room winRoom = null;
-            if (worldMap.getWinRoom() != null) winRoom = rooms.get(worldMap.getWinRoom());
-            return new Room[]{rooms.get(worldMap.getStartingRoom()), winRoom};
+            if (worldMap.getWinRoom() != null) {
+                winRoom = rooms.get(worldMap.getWinRoom());
+            }
+
+            if (rooms.get(worldMap.getStartingRoom()) == null) {
+                return null;
+            }
+
+            return new LoadedWorld(rooms.get(worldMap.getStartingRoom()), winRoom);
         } catch (IOException e) {
             log.error("IO Exception when reading {}", filePath);
             return null;
         }
     }
 
+    /**
+     * A data carrier containing the anchor points of the loaded game world.
+     * @param startingRoom The room where the player begins the game.
+     * @param winRoom The room the player may reach to trigger the win condition.
+     */
+    public record LoadedWorld(Room startingRoom, Room winRoom) {}
+
+    /**
+     * Instantiates the core domain objects from their respective Data Transfer Objects and stores them in lookup maps.
+     * Dependencies between objects are not resolved in this step.
+     * @param worldMap The parsed JSON representation of the world.
+     */
     private void createDTOs(WorldMap worldMap) {
         for (CharacterDTO dto : worldMap.getCharacters()) {
             Character character = new Character(dto.getName());
@@ -75,6 +105,10 @@ public class WorldLoader {
         log.info("DTOs created.");
     }
 
+    /**
+     * Iterates through the raw DTOs again to link the instantiated domain objects together.
+     * @param worldMap The parsed JSON representation of the world.
+     */
     private void assignDTOs(WorldMap worldMap) {
         for (RoomDTO dto : worldMap.getRooms()) {
             Room room = rooms.get(dto.getName());
@@ -82,26 +116,24 @@ public class WorldLoader {
             for (String exitName : dto.getExits()) {
                 Room exit = rooms.get(exitName);
 
-                if (exit != null) {
-                    room.setExit(exitName, exit);
-                } else {
-                    log.warn("Room {} has no exits.", exitName);
+                if (!room.setExit(exitName, exit)) {
+                    log.warn("Exit room {} does not exist.", exitName);
                 }
             }
 
             for (String characterName : dto.getCharacters()) {
                 Character character = characters.get(characterName);
 
-                if (character != null) {
-                    room.addCharacter(character);
+                if (!room.addCharacter(character)) {
+                    log.warn("Couldn't find character {}", characterName);
                 }
             }
 
             for (String itemName : dto.getItems()) {
                 Item item = items.get(itemName);
 
-                if (item != null) {
-                    room.addItem(item);
+                if (!room.addItem(item)) {
+                    log.warn("Couldn't find item {}", itemName);
                 }
             }
         }
@@ -113,7 +145,9 @@ public class WorldLoader {
                 for (DialogueOptionDTO optionDTO : nodeDTO.getOptions()) {
                     DialogueNode targetNode = dialogueNodes.get(optionDTO.getNextNode());
 
-                    sourceNode.addOption(new DialogueOption(optionDTO.getLabel(), targetNode));
+                    if (!sourceNode.addOption(new DialogueOption(optionDTO.getLabel(), targetNode))) {
+                        log.warn("Dialogue Option wasn't added because the option is null");
+                    }
                 }
             }
         }
@@ -132,9 +166,7 @@ public class WorldLoader {
                     Item tradeOut = items.get(dto.getTradeOut());
                     DialogueNode tradeDialogue = dialogueNodes.get(dto.getTradeDialogue());
 
-                    if (tradeOut != null && tradeDialogue != null) {
-                        character.addTrade(dto.getTradeIn(), tradeOut, tradeDialogue);
-                    } else {
+                    if (!character.addTrade(dto.getTradeIn(), tradeOut, tradeDialogue)) {
                         log.warn("Trade for {} is missing valid Item or Dialogue references.", character.getName());
                     }
                 }
@@ -157,6 +189,9 @@ public class WorldLoader {
         log.info("DTOs assigned.");
     }
 
+    /**
+     * Root structure representing the world.
+     */
     @Data
     private static class WorldMap {
         private List<RoomDTO> rooms;
@@ -167,6 +202,9 @@ public class WorldLoader {
         private String winRoom;
     }
 
+    /**
+     * Data transfer object representing a raw room entry.
+     */
     @Data
     private static class RoomDTO {
         private String name;
@@ -179,6 +217,9 @@ public class WorldLoader {
         private boolean locked;
     }
 
+    /**
+     * Data transfer object representing a raw character entry.
+     */
     @Data
     private static class CharacterDTO {
         private String name;
@@ -186,6 +227,9 @@ public class WorldLoader {
         private List<TradeDTO> trades;
     }
 
+    /**
+     * Data transfer object representing a raw trade entry.
+     */
     @Data
     private static class TradeDTO {
         private String tradeIn;
@@ -193,6 +237,9 @@ public class WorldLoader {
         private String tradeDialogue;
     }
 
+    /**
+     * Data transfer object representing a raw item entry.
+     */
     @Data
     private static class ItemDTO {
         private String name;
@@ -202,6 +249,9 @@ public class WorldLoader {
         private String usageEffect;
     }
 
+    /**
+     * Data transfer object representing a raw dialogue node entry.
+     */
     @Data
     private static class DialogueNodeDTO {
         private String id;
@@ -209,6 +259,9 @@ public class WorldLoader {
         private List<DialogueOptionDTO> options;
     }
 
+    /**
+     * Data transfer object representing a raw dialogue option entry.
+     */
     @Data
     private static class DialogueOptionDTO {
         private String label;

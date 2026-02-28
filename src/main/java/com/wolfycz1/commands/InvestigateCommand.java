@@ -5,10 +5,20 @@ import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
 
+/**
+ * Handles the player action of looking around their current environment.
+ * @author wolfycz1
+ */
 @AllArgsConstructor
 public class InvestigateCommand implements Command {
     private final Console console;
 
+    /**
+     * Executes the investigate sequence.
+     * @param argument (ignored).
+     * If the argument matches exactly {@code "INTERNAL"}, the command suppresses its standard narrative preamble.
+     * @return Formatted multi-line string representing the visual state of the room.
+     */
     @Override
     public String execute(String argument) {
         Room currentRoom = console.getCurrentRoom();
@@ -46,11 +56,19 @@ public class InvestigateCommand implements Command {
         return sb.toString();
     }
 
+    /**
+     * Retrieves a summary of the investigate command with aliases.
+     * @return A localized short description string.
+     */
     @Override
     public String getDescription() {
         return Language.get("cmd.investigate.desc") + " " + Arrays.toString(Language.getArray("cmd.investigate.aliases"));
     }
 
+    /**
+     * Retrieves the manual entry for the investigate command.
+     * @return A localized multi-line help string.
+     */
     @Override
     public String getDetails() {
         return String.format("""
@@ -58,6 +76,10 @@ public class InvestigateCommand implements Command {
                %s""", Language.get("man.investigate.cmd"), Language.get("man.investigate.desc"));
     }
 
+    /**
+     * Indicates whether executing this command terminates the game.
+     * @return always {@code false}
+     */
     @Override
     public boolean exit() {
         return false;
