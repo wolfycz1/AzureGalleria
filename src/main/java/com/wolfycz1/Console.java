@@ -60,9 +60,10 @@ public class Console {
         terminal.writer().println(breakupStringToLines(Language.get("game.intro")) + "\nPress enter to start.");
         reader.readLine();
 
-        terminal.writer().println(commands.get(Language.get("cmd.investigate")).execute("INTERNAL"));
-        while (!exit) {
-            execute();
+        terminal.writer().println(commands.get(Language.get("cmd.investigate")).execute("INTERNAL").response());
+        boolean shouldExit = false;
+        while (!shouldExit) {
+            shouldExit = execute();
             log.debug("STATE\n\tCurrent Room: {} {} {}\n\t\tItems: {}\n\t\tCharacters {}\n\t\tExits: {}\n\tInventory: {}",
                     currentRoom.getName(), currentRoom.getAliases(), currentRoom.isLocked() ? "LOCKED" : "UNLOCKED",
                     currentRoom.listItems(), currentRoom.listCharacters(), currentRoom.listExits(), inventory.listItems());
@@ -95,15 +96,15 @@ public class Console {
      * Reads input from the player and routes it appropriately.
      * If a conversation is active, the input is sent to the DialogueHandler.
      */
-    private void execute() {
+    private boolean execute() {
         try {
             String in = reader.readLine(">> ");
-            if (in.isEmpty()) return;
+            if (in.isEmpty()) return false;
             in = in.trim().toLowerCase();
 
             if (dialogueActive) {
                 handleDialogue(in);
-                return;
+                return false;
             }
 
             ParsedCommand parsedInput = parse(in);
@@ -112,8 +113,9 @@ public class Console {
             log.info("Command: \"{}\" Argument: \"{}\"", command, argument);
 
             if (commands.containsKey(command)) {
-                terminal.writer().printf(">> %s%n", commands.get(command).execute(argument));
-                exit = commands.get(command).exit();
+                Command.CommandResponse response = commands.get(command).execute(argument);
+                terminal.writer().printf(">> %s%n", response.response());
+                return response.shouldExit();
             } else {
                 terminal.writer().println(">> " + Language.get("console.err.notRecognized", command, Language.get("cmd.help")));
             }
@@ -125,6 +127,7 @@ public class Console {
         } catch (EndOfFileException e) {
             log.warn("End of File Exception triggered at Line Reader.");
         }
+        return false;
     }
 
     /**

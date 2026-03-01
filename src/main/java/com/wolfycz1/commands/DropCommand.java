@@ -22,29 +22,29 @@ public class DropCommand implements Command {
      * Executes the drop sequence. Validates the player's input, attempts to remove the specified item from the inventory,
      * and places it into the current room.
      * @param argument The name of the item the player wants to drop.
-     * @return A localized status message indicating success or failure. Appends {@code Investigate} on success.
+     * @return A {@code CommandResponse} with a reponse and exit status. Appends {@code Investigate} on success.
      */
     @Override
-    public String execute(String argument) {
-        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.help"),Language.get("cmd.drop")));
+    public CommandResponse execute(String argument) {
+        if (argument.isEmpty()) return new CommandResponse(String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.help"),Language.get("cmd.drop"))), false);
 
         Inventory inventory = console.getInventory();
         Room currentRoom = console.getCurrentRoom();
 
         Optional<Item> optItem = inventory.removeItem(argument);
         if (optItem.isEmpty()) {
-            return Language.get("cmd.drop.err.noItem");
+            return new CommandResponse(Language.get("cmd.drop.err.noItem"), false);
         }
         Item item = optItem.get();
 
         if (!currentRoom.addItem(item)) {
             inventory.addItem(item);
-            return Language.get("cmd.drop.err.noItem");
+            return new CommandResponse(Language.get("cmd.drop.err.noItem"), false);
         }
 
-        return Language.get("cmd.drop.execute", item.getName()) + "\n"
-                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL");
+        return new CommandResponse(Language.get("cmd.drop.execute", item.getName()) + "\n"
+                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL").response(), false);
     }
 
     /**
@@ -69,14 +69,5 @@ public class DropCommand implements Command {
                %s
                     %s""", Language.get("man.drop.cmd"), Language.get("man.drop.arg"),
                 Language.get("man.example"), Language.get("man.drop.example"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

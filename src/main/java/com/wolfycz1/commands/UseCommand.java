@@ -22,16 +22,15 @@ public class UseCommand implements Command {
      * Executes the use sequence. If the item is a key, it attempts to unlock an adjacent room.
      * If the item has a specific {@link UsageEffect}, it attempts to trigger that effect.
      * @param argument The name of the item the player wants to use.
-     * @return A localized status string describing the outcome of the interaction,
-     * or an errorif the item cannot be used in the current context.
+     * @return A {@code CommandResponse} with a reponse and exit status.
      */
     @Override
-    public String execute(String argument) {
-        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.use")));
+    public CommandResponse execute(String argument) {
+        if (argument.isEmpty()) return new CommandResponse(String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.use"))), false);
 
         Optional<Item> optItem = console.getInventory().getItem(argument);
-        if (optItem.isEmpty()) return Language.get("cmd.use.err.noItem");
+        if (optItem.isEmpty()) return new CommandResponse(Language.get("cmd.use.err.noItem"), false);
         Item item = optItem.get();
 
         Room currentRoom = console.getCurrentRoom();
@@ -41,33 +40,28 @@ public class UseCommand implements Command {
             Optional<Room> optRoom = currentRoom.getExit(targetRoom.getName());
             if (optRoom.isPresent()) {
                 if (!targetRoom.isLocked()) {
-                    return Language.get("cmd.use.err.unlocked");
+                    return new CommandResponse(Language.get("cmd.use.err.unlocked"), false);
                 }
                 targetRoom.unlock();
-                return Language.get("cmd.use.execute.key", targetRoom.getName());
+                return new CommandResponse(Language.get("cmd.use.execute.key", targetRoom.getName()), false);
             }
-            return Language.get("cmd.use.err.key", item.getName());
+            return new CommandResponse(Language.get("cmd.use.err.key", item.getName()), false);
         }
 
         if (item.getUsageEffect() != null) {
-            //noinspection SwitchStatementWithTooFewBranches
-            switch (item.getUsageEffect()) {
+            return new CommandResponse(switch (item.getUsageEffect()) {
                 case UsageEffect.RESTORE_POWER -> {
                     if (currentRoom.getName().equalsIgnoreCase(Language.get("room.generatorRoom"))) {
                         console.setWinState(true);
                         currentRoom.setDescription(Language.get("cmd.use.restorePower.newDesc"));
-                        return Language.get("cmd.use.execute.restorePower", item.getName());
+                        yield Language.get("cmd.use.execute.restorePower", item.getName());
                     }
-                    return Language.get("cmd.use.err.restorePower");
+                    yield Language.get("cmd.use.err.restorePower");
                 }
-
-                default -> {
-                    return Language.get("cmd.use.err.noKnowledge");
-                }
-            }
+            }, false);
         }
 
-        return Language.get("cmd.use.err.noUse");
+        return new CommandResponse(Language.get("cmd.use.err.noUse"), false);
     }
 
     /**
@@ -92,14 +86,5 @@ public class UseCommand implements Command {
                %s
                     %s""", Language.get("man.use.cmd"), Language.get("man.use.arg"), Language.get("man.example"),
                 Language.get("man.use.example"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

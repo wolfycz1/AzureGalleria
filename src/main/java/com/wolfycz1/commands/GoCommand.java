@@ -20,24 +20,24 @@ public class GoCommand implements Command {
      * Executes the movement sequence. Validates the destination, checks if the current room has a matching exit,
      * and verifies the destination is unlocked.
      * @param argument The name or alias of the exit the player wants to travel to.
-     * @return A localized status message. Appends {@code Investigate} on success.
+     * @return A {@code CommandResponse} with a reponse and exit status. Appends {@code Investigate} on success.
      */
     @Override
-    public String execute(String argument) {
-        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.go")));
+    public CommandResponse execute(String argument) {
+        if (argument.isEmpty()) return new CommandResponse(String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.go"))), false);
 
         Optional<Room> optRoom = console.getCurrentRoom().getExit(argument);
         if (optRoom.isEmpty()) {
-            return Language.get("cmd.go.err.noExit", argument);
+            return new CommandResponse(Language.get("cmd.go.err.noExit", argument), false);
         }
         Room room = optRoom.get();
 
-        if (room.isLocked()) return Language.get("cmd.go.err.locked", room.getName());
+        if (room.isLocked()) return new CommandResponse(Language.get("cmd.go.err.locked", room.getName()), false);
 
         console.setCurrentRoom(room);
-        return Language.get("cmd.go.execute", room.getName()) + "\n"
-                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL");
+        return new CommandResponse(Language.get("cmd.go.execute", room.getName()) + "\n"
+                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL").response(), false);
     }
 
     /**
@@ -64,14 +64,5 @@ public class GoCommand implements Command {
                     %s
                     %s""", Language.get("man.go.cmd"), Language.get("man.go.arg.room"), Language.get("man.go.arg.alias"),
                 Language.get("man.example"), Language.get("man.go.example.room"), Language.get("man.go.example.alias"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

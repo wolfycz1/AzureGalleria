@@ -22,40 +22,34 @@ public class PickupCommand implements Command {
      * Executes the pickup sequence. Validates the player's input, attempts to remove the specified item from the current room,
      * and tries to add it to the inventory.
      * @param argument The name of the item the player wants to pick up.
-     * @return A localized status message indicating success or failure. Appends {@code Investigate} on success.
+     * @return A {@code CommandResponse} with a reponse and exit status. Appends {@code Investigate} on success.
      */
     @Override
-    public String execute(String argument) {
-        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.pickup")));
+    public CommandResponse execute(String argument) {
+        if (argument.isEmpty()) return new CommandResponse(String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.pickup"))), false);
 
         Inventory inventory = console.getInventory();
         Room currentRoom = console.getCurrentRoom();
 
         Optional<Item> optItem = currentRoom.removeItem(argument);
         if (optItem.isEmpty()) {
-            return Language.get("cmd.pickup.err.noItem", argument);
+            return new CommandResponse(Language.get("cmd.pickup.err.noItem", argument), false);
         }
         Item item = optItem.get();
 
         Optional<Inventory.InventoryFailure> failure = inventory.addItem(item);
         if (failure.isPresent()) {
             currentRoom.addItem(item);
-            switch (failure.get()) {
-                case INVENTORY_FULL -> {
-                    return Language.get("cmd.pickup.err.invFull");
-                }
-                case NO_ITEM -> {
-                    return Language.get("cmd.pickup.err.noItem", argument);
-                }
-                case NOT_PICKUPABLE -> {
-                    return Language.get("cmd.pickup.err.notPickupable", item.getName());
-                }
-            }
+            return new CommandResponse(switch (failure.get()) {
+                case INVENTORY_FULL -> Language.get("cmd.pickup.err.invFull");
+                case NO_ITEM -> Language.get("cmd.pickup.err.noItem", argument);
+                case NOT_PICKUPABLE -> Language.get("cmd.pickup.err.notPickupable", item.getName());
+            }, false);
         }
 
-        return Language.get("cmd.pickup.execute", item.getName()) + "\n"
-                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL");
+        return new CommandResponse(Language.get("cmd.pickup.execute", item.getName()) + "\n"
+                + console.getCommands().get(Language.get("cmd.investigate")).execute("INTERNAL").response(), false);
     }
 
     /**
@@ -84,14 +78,5 @@ public class PickupCommand implements Command {
                     %s""", Language.get("man.pickup.cmd"), Language.get("man.pickup.arg"), Language.get("man.example"),
                 Language.get("man.pickup.example"), Language.get("man.note"),
                 Language.get("man.pickup.note", console.getInventory().getCapacity()));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

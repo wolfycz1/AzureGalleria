@@ -27,32 +27,32 @@ public class InteractCommand implements Command {
      * If a trade is met, it swaps the items and triggers the trade dialogue. If no trades are met,
      * it falls back to the character's default dialogue.
      * @param argument The name of the character the player wants to speak to.
-     * @return Formatted dialogue string to display to the player, or an error message if the character is missing.
+     * @return A {@code CommandResponse} with a reponse and exit status. Appends {@code Investigate} on success.
      */
     @Override
-    public String execute(String argument) {
-        if (argument.isEmpty()) return String.format("%s %s", Language.get("cmd.err.noArg"),
-                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.interact")));
+    public CommandResponse execute(String argument) {
+        if (argument.isEmpty()) return new CommandResponse(String.format("%s %s", Language.get("cmd.err.noArg"),
+                Language.get("cmd.seeCmd", Language.get("cmd.help"), Language.get("cmd.interact"))), false);
 
         Optional<Character> optCharacter = console.getCurrentRoom().getCharacter(argument);
         if (optCharacter.isEmpty()) {
-            return Language.get("cmd.interact.err.noChar", argument);
+            return new CommandResponse(Language.get("cmd.interact.err.noChar", argument), false);
         }
         Character character = optCharacter.get();
         TradeResult result = checkTrade(character);
         if (result.shouldReturn()) {
-            return result.text();
+            return new CommandResponse(result.text(), false);
         }
 
-        if (character.getStartNode() == null) return Language.get("cmd.interact.err.noDialogue", character.getName());
+        if (character.getStartNode() == null) return new CommandResponse(Language.get("cmd.interact.err.noDialogue", character.getName()), false);
 
         DialogueHandler.DialogueResult dialogueResult = console.getDialogueHandler().startDialogue(character);
         return switch (dialogueResult.status()) {
             case CONTINUE -> {
                 console.setDialogueActive(true);
-                yield dialogueResult.output();
+                yield new CommandResponse(dialogueResult.output(), false);
             }
-            case ERROR, ENDED -> Language.get("cmd.interact.err.noDialogue", character.getName());
+            case ERROR, ENDED -> new CommandResponse(Language.get("cmd.interact.err.noDialogue", character.getName()), false);
         };
     }
 
@@ -128,14 +128,5 @@ public class InteractCommand implements Command {
                %s
                     %s""", Language.get("man.interact.cmd"), Language.get("man.interact.arg"),
                 Language.get("man.example"), Language.get("man.interact.example"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

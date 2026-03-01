@@ -18,10 +18,10 @@ public class HelpCommand implements Command {
      * Executes the help sequence. If no argument is provided, it builds a formatted list of all registered commands.
      * If a valid command name is passed as an argument it returns the detailed manual entry for that specific command.
      * @param argument The specific command the player wants more details on, or an empty string for the general list.
-     * @return The formatted help text or an error message if the requested command is unknown.
+     * @return A {@code CommandResponse} with a reponse and exit status.
      */
     @Override
-    public String execute(String argument) {
+    public CommandResponse execute(String argument) {
         if (argument.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             sb.append(Language.get("cmd.help.moreInfo")).append("\n\n");
@@ -31,13 +31,13 @@ public class HelpCommand implements Command {
                 sb.append(String.format("%-15s %s %n", name.toUpperCase(), command.getDescription()));
             }
 
-            return sb.deleteCharAt(sb.length() -1).toString();
+            return new CommandResponse(sb.deleteCharAt(sb.length() -1).toString(), false);
         }
 
         Command command = console.getCommands().get(argument);
-        if (command == null) return Language.get("cmd.help.err.unknownCmd", argument);
+        if (command == null) return new CommandResponse(Language.get("cmd.help.err.unknownCmd", argument), false);
 
-        return command.getDescription() + "\n\n" + command.getDetails();
+        return new CommandResponse(command.getDescription() + "\n\n" + command.getDetails(), false);
     }
 
     /**
@@ -58,14 +58,5 @@ public class HelpCommand implements Command {
         return String.format("""
                %s
                     %s""", Language.get("man.help.cmd"), Language.get("man.help.arg"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

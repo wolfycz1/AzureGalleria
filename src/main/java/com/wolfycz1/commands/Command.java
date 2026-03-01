@@ -5,8 +5,8 @@ package com.wolfycz1.commands;
  * @author wolfycz1
  */
 public interface Command {
-    String execute(String argument);
+    CommandResponse execute(String argument);
     String getDescription();
     String getDetails();
-    boolean exit();
+    record CommandResponse(String response, boolean shouldExit) {}
 }

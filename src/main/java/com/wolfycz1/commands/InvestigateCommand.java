@@ -16,13 +16,13 @@ public class InvestigateCommand implements Command {
     private final Console console;
 
     /**
-     * Executes the investigate sequence.
+     * Executes the investigate sequence. Results in a formatted multi-line string representing the visual state of the room.
      * @param argument (ignored).
      * If the argument matches exactly {@code "INTERNAL"}, the command suppresses its standard narrative preamble.
-     * @return Formatted multi-line string representing the visual state of the room.
+     * @return A {@code CommandResponse} with a reponse and exit status.
      */
     @Override
-    public String execute(String argument) {
+    public CommandResponse execute(String argument) {
         Room currentRoom = console.getCurrentRoom();
         String roomName = currentRoom.getName();
 
@@ -55,7 +55,7 @@ public class InvestigateCommand implements Command {
         else
             sb.append(Language.get("cmd.investigate.label.inventory")).append(": ").append(console.getInventory().listItems()).append("\n");
 
-        return sb.toString();
+        return new CommandResponse(sb.toString(), false);
     }
 
     /**
@@ -76,14 +76,5 @@ public class InvestigateCommand implements Command {
         return String.format("""
                %s
                %s""", Language.get("man.investigate.cmd"), Language.get("man.investigate.desc"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

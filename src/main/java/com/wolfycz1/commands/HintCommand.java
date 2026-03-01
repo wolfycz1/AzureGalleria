@@ -15,13 +15,13 @@ public class HintCommand implements Command {
     private final Console console;
 
     /**
-     * Executes the hint sequence. Ignores any arguments.
+     * Executes the hint sequence. Ignores any arguments. Results in a hint contextually dependent on the current room.
      * @param argument (ignored)
-     * @return The contextual hint string for the current room.
+     * @return A {@code CommandResponse} with a reponse and exit status.
      */
     @Override
-    public String execute(String argument) {
-        return console.getCurrentRoom().getHint();
+    public CommandResponse execute(String argument) {
+        return new CommandResponse(console.getCurrentRoom().getHint(), false);
     }
 
     /**
@@ -42,14 +42,5 @@ public class HintCommand implements Command {
         return String.format("""
                %s
                %s""", Language.get("man.hint.cmd"), Language.get("man.hint.desc"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code false}
-     */
-    @Override
-    public boolean exit() {
-        return false;
     }
 }

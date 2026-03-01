@@ -16,8 +16,8 @@ public class ExitCommand implements Command {
      * @return The localized string confirming the game is closing.
      */
     @Override
-    public String execute(String argument) {
-        return Language.get("cmd.exit.execute");
+    public CommandResponse execute(String argument) {
+        return new CommandResponse(Language.get("cmd.exit.execute"), true);
     }
 
     /**
@@ -38,14 +38,5 @@ public class ExitCommand implements Command {
         return String.format("""
                %s
                %s""", Language.get("man.exit.cmd"), Language.get("man.exit.desc"));
-    }
-
-    /**
-     * Indicates whether executing this command terminates the game.
-     * @return always {@code true}
-     */
-    @Override
-    public boolean exit() {
-        return true;
     }
 }

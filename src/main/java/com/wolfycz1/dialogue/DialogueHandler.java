@@ -3,7 +3,9 @@ package com.wolfycz1.dialogue;
 import com.wolfycz1.models.Character;
 import com.wolfycz1.utils.Language;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Manages the state and progression of an active conversation between the player and a character.
@@ -62,7 +64,7 @@ public class DialogueHandler {
             return new DialogueResult(DialogueStatus.ERROR, Language.get("dialogueHandler.err.notNum"));
         }
 
-        List<DialogueOption> options = currentNode.getOptions();
+        List<DialogueOption> options = Optional.ofNullable(currentNode.getOptions()).orElse(new ArrayList<>());
         if (choiceIndex < 0 || choiceIndex > options.size()) {
             return new DialogueResult(DialogueStatus.ERROR, Language.get("dialogueHandler.err.invOpt"));
         }
