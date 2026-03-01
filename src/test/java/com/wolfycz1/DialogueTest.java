@@ -1,5 +1,9 @@
 package com.wolfycz1;
 
+import com.wolfycz1.dialogue.DialogueHandler;
+import com.wolfycz1.dialogue.DialogueNode;
+import com.wolfycz1.dialogue.DialogueOption;
+import com.wolfycz1.models.Character;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +13,7 @@ class DialogueTest {
     DialogueNode dialogueNode;
     DialogueOption dialogueOption;
     DialogueHandler dialogueHandler;
-    Character character;
+    com.wolfycz1.models.Character character;
 
     @BeforeEach
     void setUp() {

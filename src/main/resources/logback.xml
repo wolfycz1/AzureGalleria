@@ -1,6 +1,6 @@
 <configuration>
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-    <appender name="STDOUT" class="com.wolfycz1.JLineAppender">
+    <appender name="STDOUT" class="com.wolfycz1.utils.JLineAppender">
         <encoder>
             <pattern>[%level] %msg%n</pattern>
             <charset>UTF-8</charset>

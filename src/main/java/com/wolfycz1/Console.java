@@ -1,6 +1,12 @@
 package com.wolfycz1;
 
 import com.wolfycz1.commands.*;
+import com.wolfycz1.dialogue.DialogueHandler;
+import com.wolfycz1.models.Inventory;
+import com.wolfycz1.models.Room;
+import com.wolfycz1.utils.JLineAppender;
+import com.wolfycz1.utils.Language;
+import com.wolfycz1.utils.WorldLoader;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

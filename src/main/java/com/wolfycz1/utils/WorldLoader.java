@@ -1,7 +1,13 @@
-package com.wolfycz1;
+package com.wolfycz1.utils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wolfycz1.models.Character;
+import com.wolfycz1.models.Item;
+import com.wolfycz1.Main;
+import com.wolfycz1.models.Room;
+import com.wolfycz1.dialogue.DialogueNode;
+import com.wolfycz1.dialogue.DialogueOption;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wolfycz1.Item.UsageEffect;
+import com.wolfycz1.models.Item.UsageEffect;
 
 /**
  * Handles the loading of the game world from a JSON file.

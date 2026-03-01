@@ -1,9 +1,13 @@
 package com.wolfycz1.commands;
 
 import com.wolfycz1.*;
-import com.wolfycz1.Character;
+import com.wolfycz1.models.Character;
+import com.wolfycz1.dialogue.DialogueHandler;
+import com.wolfycz1.models.Inventory;
+import com.wolfycz1.models.Item;
+import com.wolfycz1.utils.Language;
 import lombok.AllArgsConstructor;
-import com.wolfycz1.Character.Trade;
+import com.wolfycz1.models.Character.Trade;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;

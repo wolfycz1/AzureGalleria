@@ -1,5 +1,6 @@
-package com.wolfycz1;
+package com.wolfycz1.models;
 
+import com.wolfycz1.dialogue.DialogueNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

@@ -1,5 +1,7 @@
 package com.wolfycz1;
 
+import com.wolfycz1.models.Inventory;
+import com.wolfycz1.models.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package com.wolfycz1;
+package com.wolfycz1.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

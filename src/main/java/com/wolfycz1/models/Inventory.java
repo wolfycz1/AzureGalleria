@@ -1,6 +1,5 @@
-package com.wolfycz1;
+package com.wolfycz1.models;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -1,5 +1,8 @@
 package com.wolfycz1;
 
+import com.wolfycz1.models.Character;
+import com.wolfycz1.models.Item;
+import com.wolfycz1.models.Room;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,10 +83,10 @@ class RoomTest {
     @Test
     void getCharacter_ValidName_Character() {
         // Arrange
-        Character addedCharacter = new Character("name");
+        com.wolfycz1.models.Character addedCharacter = new com.wolfycz1.models.Character("name");
         room.addCharacter(addedCharacter);
         // Act
-        Optional<Character> gotCharacter = room.getCharacter(addedCharacter.getName());
+        Optional<com.wolfycz1.models.Character> gotCharacter = room.getCharacter(addedCharacter.getName());
         // Assert
         assertTrue(gotCharacter.isPresent());
         assertEquals(addedCharacter, gotCharacter.get());
@@ -92,10 +95,10 @@ class RoomTest {
     @Test
     void getCharacter_DifferentCase_Item() {
         // Arrange
-        Character addedCharacter = new Character("name");
+        com.wolfycz1.models.Character addedCharacter = new com.wolfycz1.models.Character("name");
         room.addCharacter(addedCharacter);
         // Act
-        Optional<Character> gotCharacter = room.getCharacter("nAmE");
+        Optional<com.wolfycz1.models.Character> gotCharacter = room.getCharacter("nAmE");
         // Assert
         assertTrue(gotCharacter.isPresent());
         assertEquals(addedCharacter, gotCharacter.get());
@@ -105,7 +108,7 @@ class RoomTest {
     void getCharacter_EmptyName_EmptyOptional() {
         // Arrange
         // Act
-        Optional<Character> gotCharacter = room.getCharacter("");
+        Optional<com.wolfycz1.models.Character> gotCharacter = room.getCharacter("");
         // Assert
         assertTrue(gotCharacter.isEmpty());
     }
@@ -114,7 +117,7 @@ class RoomTest {
     void getCharacter_NullName_EmptyOptiona() {
         // Arrange
         // Act
-        Optional<Character> gotCharacter = room.getCharacter(null);
+        Optional<com.wolfycz1.models.Character> gotCharacter = room.getCharacter(null);
         // Assert
         assertTrue(gotCharacter.isEmpty());
     }
@@ -171,7 +174,7 @@ class RoomTest {
     @Test
     void addCharacter_ValidCharacter_True() {
         // Arrange
-        Character character = new Character("name");
+        com.wolfycz1.models.Character character = new Character("name");
         // Act
         boolean returnValue = room.addCharacter(character);
         // Assert

@@ -1,9 +1,8 @@
 package com.wolfycz1.commands;
 
-import com.wolfycz1.Command;
 import com.wolfycz1.Console;
-import com.wolfycz1.Language;
-import com.wolfycz1.Room;
+import com.wolfycz1.utils.Language;
+import com.wolfycz1.models.Room;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;

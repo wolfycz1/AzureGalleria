@@ -1,4 +1,4 @@
-package com.wolfycz1;
+package com.wolfycz1.utils;
 
 import ch.qos.logback.core.ConsoleAppender;
 import org.jline.reader.LineReader;

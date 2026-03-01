@@ -1,4 +1,4 @@
-package com.wolfycz1;
+package com.wolfycz1.dialogue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

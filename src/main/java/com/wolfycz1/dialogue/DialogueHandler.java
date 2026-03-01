@@ -1,4 +1,7 @@
-package com.wolfycz1;
+package com.wolfycz1.dialogue;
+
+import com.wolfycz1.models.Character;
+import com.wolfycz1.utils.Language;
 
 import java.util.List;
 

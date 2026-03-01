@@ -1,4 +1,4 @@
-package com.wolfycz1;
+package com.wolfycz1.commands;
 
 /**
  * Defines the contract for all executable actions within the game.
